@@ -1,10 +1,11 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 public class GameController {
-    private RegistryMenu registryMenu = new RegistryMenu();
-    private MainMenu mainMenu= new MainMenu();
+    final private RegistryMenu registryMenu = new RegistryMenu();
+    private MainMenu mainMenu = new MainMenu();
     private User loggedInUser = null;
     private User competitor = null;
     final private Outputs output = new Outputs();
@@ -18,17 +19,19 @@ public class GameController {
         String forgotPassword = "Forgot my password -u (\\S+)";
         String admin = "login admin (\\S+)";//-login admin <pass>
         Matcher matcher;
-
         while(true){
             String command = scan.nextLine();
             if(command.equals("Exit")) break;
-            else if (command.matches("main menu")){
-                System.out.println("entered main menu");
-                mainMenu.run(scan,loggedInUser);
-            }
             else if(command.matches(signup)){
                 matcher = getCommandMatcher(command, signup);
                 registryMenu.signup(matcher);
+            }
+            else if (command.matches("main menu")){
+                if(loggedInUser == null) System.out.println("Please login first");
+                else{
+                    System.out.println("entered main menu");
+                    mainMenu.run(scan,loggedInUser);
+                }
             }
             else if(command.matches(chooseSecurityQuestion)){
                 matcher = getCommandMatcher(command, chooseSecurityQuestion);
@@ -50,6 +53,8 @@ public class GameController {
                 matcher=getCommandMatcher(command, admin);
                 admin(matcher, scan);
             }
+            else if(command.equals("Show players")) showPlayers();
+            else if(command.equals("command prompt")) Manuals();
             else System.out.println("invalid input!");
         }
     }
@@ -57,11 +62,90 @@ public class GameController {
         Pattern pattern=Pattern.compile(regex);
         return pattern.matcher(input);
     }
+    public void getInformationFromFile(){
+        try{
+            File myFile = new File("C:\\Users\\ASUS\\Desktop\\University\\Term2\\OOP\\proj_group7\\src\\User Information.txt");
+            Scanner scan = new Scanner(myFile);
+            ArrayList<User> users = new ArrayList<>();
+            String[] parts;
+            while(scan.hasNextLine()){
+                String line = scan.nextLine();
+                if(line.equals("new user:")){
+                    String information = scan.nextLine();
+                    parts = information.split(" ");
+                    User user = new User(parts[0], parts[1], parts[2], parts[3]);
+                    user.setNumberOfQuestion(Integer.parseInt(parts[4]));
+                    user.setAnswer(parts[5]);
+                    user.setCoin(Integer.parseInt(parts[6]));
+                    user.setExp(Integer.parseInt(parts[7]));
+                    user.setHp(Integer.parseInt(parts[8]));
+                    users.add(user);
+                }
+            }
+            scan.close();
+            registryMenu.setUsers(users);
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+    }
+    public void writeInformationInFile(){
+        ArrayList<User> users = registryMenu.getUsers();
+        try{
+            File myFile = new File("C:\\Users\\ASUS\\Desktop\\University\\Term2\\OOP\\proj_group7\\src\\User Information.txt");
+            FileWriter writer = new FileWriter(myFile);
+            for(User user : users){
+                String str = user.toString();
+                writer.write(str);
+            }
+            writer.close();
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+    }
+    private void login(Matcher matcher){
+        if(!matcher.matches() || loggedInUser != null) System.out.println("invalid input!");
+        else{
+            String username = matcher.group(1);
+            String password = matcher.group(2);
+            User user = registryMenu.findUserByUsername(username);
+            if(user == null) System.out.println(output.usernameDoesNotExist);
+            else if(!user.getPassword().equals(password)) System.out.println(output.wrongPasswordEntered);
+            else{
+                loggedInUser = user;
+                System.out.println(output.loggedInSuccessfully);
+            }
+        }
+    }
+    private void Manuals(){
+        String signUp = "user create -u <username> -p <password> <passwordConfirmation> -email <yourEmail> -n <nickname>";
+        String chooseQuestion = "question pick -q <numberOfQuestion> -a <answer> -c <answerConfirmation>";
+        String changePassword = "Forgot my password -u <username>";
+        String login = "user login -u <username> -p <password>";
+        String admin = "login admin <adminPassword>";
+        String addCardByAdmin = "add card <name> <defenceAttack> <duration> <damage> <upgradeLevel> <upgradeCost> <price>";
+        String editCard = "edit card <name> <defenceAttack> <duration> <damage> <upgradeLevel> <upgradeCost> <price>";
+        String deleteCard = "delete card <number>";
+        System.out.println("To signup: " + signUp + "\nTo select recovery question after registration: " + chooseQuestion + "\nTo change password: " + changePassword
+        + "\nTo login: " + login + "\nTo go to your profile menu when you are logged in: Profile menu\nTo see users: Show players\nTo enter main menu: main menu\n_________\nIf you are an admin:"
+        + admin + "\nTo add card: " + addCardByAdmin + "\nTo edit card: " + editCard + "\nTo delete a card: " + deleteCard + "\nTo logout: back"
+        + "\nTo see cards write: show cards" + "\n________");
+    }
+    private void showPlayers(){
+        ArrayList<User> users = registryMenu.getUsers();
+        System.out.println("Players without sorting:");
+        System.out.println("|------------------------------------------------------------------------------|");
+        for(User user : users) {
+            System.out.println("| Username: " + user.getUsername() + " | Email: " + user.getEmail() + " | Nickname: " + user.getNickname() + " | Exp: " + user.getExp());
+            System.out.println("|------------------------------------------------------------------------------|");
+        }
+    }
     private void admin(Matcher matcher, Scanner scanner){
-        String addCard="^add\\s+card\\s+(?<name>\\w+)\\s+(?<defenceAttack>\\d+)\\s+(?<duration>\\d+)\\s+(?<damage>\\d+)\\s+(?<upgradeLevel>\\d+)\\s+(?<upgradeCost>\\d+)\\s+(?<price>\\d+)$";
-        String editCard="^edit\\s+card\\s+(?<number>\\d+)\\s+(?<name>\\w+)\\s+(?<defenceAttack>\\d+)\\s+(?<duration>\\d+)\\s+(?<damage>\\d+)\\s+(?<upgradeLevel>\\d+)\\s+(?<upgradeCost>\\d+)\\s+(?<price>\\d+)$";
-        String deleteCard="^delete\\s+card\\s+(?<number>\\d+)$";
-        String showCards="^show\\s+cards$";
+        String addCard = "^add\\s+card\\s+(?<name>\\w+)\\s+(?<defenceAttack>\\d+)\\s+(?<duration>\\d+)\\s+(?<damage>\\d+)\\s+(?<upgradeLevel>\\d+)\\s+(?<upgradeCost>\\d+)\\s+(?<price>\\d+)$";
+        String editCard = "^edit\\s+card\\s+(?<number>\\d+)\\s+(?<name>\\w+)\\s+(?<defenceAttack>\\d+)\\s+(?<duration>\\d+)\\s+(?<damage>\\d+)\\s+(?<upgradeLevel>\\d+)\\s+(?<upgradeCost>\\d+)\\s+(?<price>\\d+)$";
+        String deleteCard = "^delete\\s+card\\s+(?<number>\\d+)$";
+        String showCards = "^show\\s+cards$";
 
         if(!matcher.matches()) System.out.println("invalid input");
         else{
@@ -70,7 +154,10 @@ public class GameController {
                 System.out.println("admin logged in successfully!");
                 while (true){
                     String command=scanner.nextLine();
-                    if(command.equals("back")) break;
+                    if(command.equals("back")) {
+                        System.out.println("Admin logged out successfully!");
+                        break;
+                    }
                     Matcher add=getCommandMatcher(command,addCard);
                     Matcher edit=getCommandMatcher(command,editCard);
                     Matcher delete=getCommandMatcher(command,deleteCard);
@@ -127,22 +214,7 @@ public class GameController {
                     }
                 }
             }
-            else
-                System.out.println("invalid password");
-        }
-    }
-    private void login(Matcher matcher){
-        if(!matcher.matches() || loggedInUser != null) System.out.println("invalid input!");
-        else{
-            String username = matcher.group(1);
-            String password = matcher.group(2);
-            User user = registryMenu.findUserByUsername(username);
-            if(user == null) System.out.println(output.usernameDoesNotExist);
-            else if(!user.getPassword().equals(password)) System.out.println(output.wrongPasswordEntered);
-            else{
-                loggedInUser = user;
-                System.out.println(output.loggedInSuccessfully);
-            }
+            else System.out.println("invalid password");
         }
     }
 }
