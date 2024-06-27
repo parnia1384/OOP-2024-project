@@ -99,7 +99,7 @@ public class User {
     public void showDeck(){
         int num=0;
         for(Damage_Heal card: cardDeck)
-            System.out.println(++num+". name: "+card.getName()+"defence_attack: "+card.getDefence_attack()+"duration: "+card.getDuration()+"damage: "+card.getDamage()+"upgradeLeve: "+card.getUpgradeLevel()+"upgradeCost: "+card.getUpgradeCost());
+            System.out.println(++num+". name: "+card.getName()+" defence_attack: "+card.getDefence_attack()+" duration: "+card.getDuration()+" damage: "+card.getDamage()+" upgradeLeve: "+card.getUpgradeLevel()+" upgradeCost: "+card.getUpgradeCost());
         for(Spell card: spellDeck)
             System.out.println(++num+". name: "+card.getName());
     }
