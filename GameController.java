@@ -9,6 +9,7 @@ public class GameController {
     private User competitor = null;
     final private Outputs output = new Outputs();
     public void run(){
+        mainMenu.addSpell();
         Scanner scan = new Scanner(System.in);
         String signup = "user create -u (\\S+) -p (\\S+) (\\S+) -email (\\S+) -n (\\S+)";
         String chooseSecurityQuestion = "question pick -q (\\S+) -a (\\S+) -c (\\S+)";
@@ -64,6 +65,7 @@ public class GameController {
                 System.out.println("admin logged in successfully!");
                 while (true){
                     String command=scanner.nextLine();
+                    if(command.equals("back")) break;
                     Matcher add=getCommandMatcher(command,addCard);
                     Matcher edit=getCommandMatcher(command,editCard);
                     Matcher delete=getCommandMatcher(command,deleteCard);
