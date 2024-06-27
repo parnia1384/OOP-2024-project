@@ -2,10 +2,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 public class RegistryMenu {
-    final private ArrayList<User> users = new ArrayList<>();
+    private ArrayList<User> users = new ArrayList<>();
     private User signedUpUser = null;
-    final private Outputs output = new Outputs();
-    private Scanner scanner = new Scanner(System.in);
+    final protected Outputs output = new Outputs();
     public void signup(Matcher matcher){
         if(!matcher.matches()) System.out.println("invalid input!");
         else{
@@ -37,7 +36,6 @@ public class RegistryMenu {
     public void chooseSecurityQuestion(Matcher matcher, Scanner scanner){
         if(!matcher.matches() || signedUpUser == null) System.out.println("invalid input!");
         else{
-            this.scanner = scanner;
             String questionNumber = matcher.group(1);
             String answer = matcher.group(2);
             String answerConfirmation = matcher.group(3);
@@ -48,9 +46,9 @@ public class RegistryMenu {
                 answer = parts[0];
                 answerConfirmation = parts[1];
             }
-            if(questionNumber.equals("1")) signedUpUser.setPasswordRecoveryQuestion("What is your father's name ?");
-            if(questionNumber.equals("2")) signedUpUser.setPasswordRecoveryQuestion("What is your favourite color ?");
-            if(questionNumber.equals("3")) signedUpUser.setPasswordRecoveryQuestion("What was the name of your first pet?");
+            if(questionNumber.equals("1")) signedUpUser.setNumberOfQuestion(1);
+            if(questionNumber.equals("2")) signedUpUser.setNumberOfQuestion(2);
+            if(questionNumber.equals("3")) signedUpUser.setNumberOfQuestion(3);
             signedUpUser.setAnswer(answer);
             System.out.println("welcome " + signedUpUser.getUsername() + "!");
             signedUpUser = null;
@@ -59,7 +57,6 @@ public class RegistryMenu {
     public void forgotPassword(Matcher matcher, Scanner scanner){
         if(!matcher.matches()) System.out.println("invalid input!");
         else{
-            this.scanner = scanner;
             String username = matcher.group(1);
             User user = findUserByUsername(username);
             if(user == null) System.out.println(output.usernameDoesNotExist);
@@ -90,7 +87,7 @@ public class RegistryMenu {
                 return user;
         return null;
     }
-    private boolean isUsernameCorrect(String username){
+    protected boolean isUsernameCorrect(String username){
         for(int i = 0; i < username.length(); i++){
             if(!((username.charAt(i) >= 48 && username.charAt(i) <= 57)
                     || (username.charAt(i) >= 65 && username.charAt(i) <= 90)
@@ -100,44 +97,50 @@ public class RegistryMenu {
         }
         return true;
     }
-    private boolean isUsernameNew(String username){
+    protected boolean isUsernameNew(String username){
         for(User user : users){
             if(user.getUsername().equals(username))
                 return false;
         }
         return true;
     }
-    private boolean isEmailCorrect(String email){
+    protected boolean isEmailCorrect(String email){
         if(email.endsWith("@gmail.com") || email.endsWith("@email.com") || email.endsWith("@yahoo.com"))
             return true;
         return false;
     }
-    private boolean doesPasswordContainUpperCase(String password){
+    protected boolean doesPasswordContainUpperCase(String password){
         for(int i = 0; i < password.length(); i++){
             if(password.charAt(i) >= 65 && password.charAt(i) <= 90)
                 return true;
         }
         return false;
     }
-    private boolean doesPasswordContainsLowerCase(String password){
+    protected boolean doesPasswordContainsLowerCase(String password){
         for(int i = 0; i < password.length(); i++){
             if(password.charAt(i) >=97 && password.charAt(i) <= 122)
                 return true;
         }
         return false;
     }
-    private boolean doesPasswordContainNumber(String password){
+    protected boolean doesPasswordContainNumber(String password){
         for(int i = 0; i < password.length(); i++){
             if(password.charAt(i) >= 48 && password.charAt(i) <= 57)
                 return true;
         }
         return false;
     }
-    private boolean passwordContainsCharacter(String password){
+    protected boolean passwordContainsCharacter(String password){
         for(int i = 0; i < password.length(); i++){
             if(password.charAt(i) >= 33 && password.charAt(i) <= 38)
                 return true;
         }
         return false;
+    }
+    public void setUsers(ArrayList<User> users){
+        this.users = users;
+    }
+    public ArrayList<User> getUsers(){
+        return users;
     }
 }
