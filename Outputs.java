@@ -14,4 +14,5 @@ public class Outputs {
     final public String wrongPasswordEntered = "Password and Username don’t match!";
     final public String loggedInSuccessfully = "user logged in successfully!";
     final public String passwordChanged = "Password changed successfully!";
+    final public String wrongPasswordEnteredForChange = "The password entered is incorrect. Please try again.";
 }
