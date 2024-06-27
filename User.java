@@ -1,29 +1,28 @@
 import java.util.ArrayList;
-
 public class User {
-    final private String username;
+    private String username;
     private String password;
-    final private String nickname;
-    final private String email;
+    private String nickname;
+    private String email;
     private String passwordRecoveryQuestion;
+    private int numberOfQuestion;
     private String answer;
     private int exp;
     private int hp;
     private int coin;
     private int level;
-    private ArrayList<Damage_Heal> cardDeck=new ArrayList<>();
-    private ArrayList<Spell> spellDeck=new ArrayList<>();
-
+    private ArrayList<Damage_Heal> cardDeck = new ArrayList<>();
+    private ArrayList<Spell> spellDeck = new ArrayList<>();
+    final private ArrayList<Games> games = new ArrayList<>();
     User(String username, String password, String email, String nickname){
         this.username = username;
         this.password = password;
         this.email = email;
         this.nickname = nickname;
         this.hp = 100;
-        this.level=1;
+        this.level = 1;
     }
     public void getRandDeck(ArrayList<Damage_Heal> cards, ArrayList<Spell> spells){
-
     }
     public void addToDeck(Damage_Heal card){cardDeck.add(card);}
     public void addToDeck(Spell card){spellDeck.add(card);}
@@ -40,6 +39,13 @@ public class User {
                 return card;
         return null;
     }
+    public void showDeck(){
+        int num = 0;
+        for(Damage_Heal card: cardDeck)
+            System.out.println(++num+". name: "+card.getName()+"defence_attack: "+card.getDefence_attack()+"duration: "+card.getDuration()+"damage: "+card.getDamage()+"upgradeLeve: "+card.getUpgradeLevel()+"upgradeCost: "+card.getUpgradeCost());
+        for(Spell card: spellDeck)
+            System.out.println(++num+". name: "+card.getName());
+    }
     public void upgradeCard(String name){
         if(getCardFromDeckByName(name)!=null) {
             if(getCardFromDeckByName(name).getUpgradeCost()>this.getCoin()||getCardFromDeckByName(name).getUpgradeLevel()>this.getLevel())
@@ -49,7 +55,12 @@ public class User {
         }
 
     }
-    public int getLevel(){return level;}
+    public int getLevel(){
+        return this.level;
+    }
+    public void setLevel(int level){
+        this.level = level;
+    }
     public String getUsername(){
         return username;
     }
@@ -70,10 +81,28 @@ public class User {
         else return false;
     }
     public void changePassword(String newPassword){
-        this.password = password;
+        this.password = newPassword;
+    }
+    public void changeUsername(String username){
+        this.username = username;
+        System.out.println("Username changed successfully!\nYour new username is: " + this.username);
+    }
+    public void changeEmail(String newEmail){
+        this.email = newEmail;
+        System.out.println("Email changed successfully!\nYour new email is: " + email);
+    }
+    public void changeNickname(String newNickname){
+        this.nickname = newNickname;
+        System.out.println("Nickname changed successfully!\nYour new nickname is: " + nickname);
     }
     public void setCoin(int newCoin){
         this.coin = newCoin;
+    }
+    public void setNumberOfQuestion(int number){
+        this.numberOfQuestion = number;
+        if(number == 1) this.passwordRecoveryQuestion = "What is your father’s name ?";
+        if(number == 2) this.passwordRecoveryQuestion = "What is your favourite color ?";
+        if(number == 3) this.passwordRecoveryQuestion = "What was the name of your first pet?";
     }
     public int getCoin(){
         return coin;
@@ -90,25 +119,14 @@ public class User {
     public int getExp(){
         return exp;
     }
-    public void setPasswordRecoveryQuestion(String question){
-        this.passwordRecoveryQuestion = question;
-    }
     public void setAnswer(String answer){
         this.answer = answer;
     }
-    public void showDeck(){
-        int num=0;
-        for(Damage_Heal card: cardDeck)
-            System.out.println(++num+". name: "+card.getName()+" defence_attack: "+card.getDefence_attack()+" duration: "+card.getDuration()+" damage: "+card.getDamage()+" upgradeLeve: "+card.getUpgradeLevel()+" upgradeCost: "+card.getUpgradeCost());
-        for(Spell card: spellDeck)
-            System.out.println(++num+". name: "+card.getName());
-    }
     public void showProfile(){
-
     }
-    // @Override
-    // public String toString(){
-    //     String userInformation = username + " " + password + " " + email + " " + ;
-    //     return userInformation;
-    // }
+    @Override
+    public String toString(){
+        String userInformation = "new user:\n" + username + " " + password + " " + email + " " + nickname + " " + numberOfQuestion + " " + answer + " " + coin + " " + exp + " " + hp + '\n';
+        return userInformation;
+    }
 }
