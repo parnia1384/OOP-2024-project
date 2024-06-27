@@ -78,7 +78,7 @@ public class GameController {
                     if(!add.matches()&&!edit.matches()&&delete.matches()&&!showCard.matches()) System.out.println("invalid request");
                     else {
                         if(showCard.matches())
-                            mainMenu.getShopCards();
+                            mainMenu.showShopCards();
                         else if(add.matches()){
                             if(mainMenu.getCardByName(add.group("name"))!=null)
                                 System.out.println("card already exists");
