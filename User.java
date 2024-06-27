@@ -1,8 +1,8 @@
 public class User {
-    private String username;
+    final private String username;
     private String password;
-    private String nickname;
-    private String email;
+    final private String nickname;
+    final private String email;
     private String passwordRecoveryQuestion;
     private String answer;
     private int exp;
@@ -14,7 +14,6 @@ public class User {
         this.email = email;
         this.nickname = nickname;
         this.hp = 100;
-
     }
     public String getUsername(){
         return username;
@@ -56,15 +55,16 @@ public class User {
     public int getExp(){
         return exp;
     }
-    public void setRecoveryConfirmation(String number, String answer){
-        if(number.equals("1")) this.passwordRecoveryQuestion = "What is your father's name ?";
-        if(number.equals("2")) this.passwordRecoveryQuestion = "What is your favourite color ?";
-        if(number.equals("3")) this.passwordRecoveryQuestion = "What was the name of your first pet?";
+    public void setPasswordRecoveryQuestion(String question){
+        this.passwordRecoveryQuestion = question;
+    }
+    public void setAnswer(String answer){
         this.answer = answer;
     }
-    public void saveInformation(){
-        String userInformation = username + " " + password + " " + nickname + " " + email;
-        String userConfirmation = passwordRecoveryQuestion + " " + answer;
-        String numbers = String.valueOf(exp) + " " + String.valueOf(hp) + " " + String.valueOf(coin);
-    }
+
+    // @Override
+    // public String toString(){
+    //     String userInformation = username + " " + password + " " + email + " " + ;
+    //     return userInformation;
+    // }
 }
