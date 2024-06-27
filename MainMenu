@@ -56,51 +56,49 @@ public class MainMenu {
             if(user.getCardFromDeckByName(card.getName())==null)
                 System.out.println(++num+". name: "+card.getName()+"price: "+card.getPrice());
     }
-    public void run(Scanner scanner, User user){
-        String input=scanner.nextLine();
-        if(input.equals("start game")){
+    public void run(Scanner scanner, User user) {
+        try {
+            String input = scanner.nextLine();
+            if (input.equals("start game")) {
 
-        }
-        else if(input.equals("show deck")){
-            user.showDeck();
-        }
-        else if(input.equals("show history")){
+            } else if (input.equals("show deck")) {
+                user.showDeck();
+            } else if (input.equals("show history")) {
 
-        }
-        else if(input.equals("shop menu")){
-            showCardsNotInDeck(user);
-            System.out.println("entered shop menu");
-            while(true){
-                String command=scanner.nextLine();
-                if(command.equals("back")) break;
-                String buyCard="^buy\\s+card\\s+(?<name>\\d+)$";
-                String upgradeCard="^upgrade\\s+card\\s+(?<name>\\d+)$";
-                Matcher buy=getCommandMatcher(command,buyCard);
-                Matcher upgrade=getCommandMatcher(command,upgradeCard);
-                if(!buy.matches()&&!upgrade.matches()) System.out.println("invalid command!");
-                else if(buy.matches()){
-                    String name=buy.group("name");
-                    if(getCardByName(name)!=null){
-                        if(user.getCoin()<getCardByName(name).getPrice())
-                            System.out.println("not enough money");
-                        else
-                            user.addToDeck(getCardByName(name));
-                    }
-                    else if(getSpellByName(name)!=null){
-                        if(user.getCoin()<getSpellByName(name).getPrice())
-                            System.out.println("not enough money");
-                        else
-                            user.addToDeck(getSpellByName(name));
+            } else if (input.equals("shop menu")) {
+                showCardsNotInDeck(user);
+                System.out.println("entered shop menu");
+                while (true) {
+                    String command = scanner.nextLine();
+                    if (command.equals("back")) break;
+                    String buyCard = "^buy\\s+card\\s+(?<name>\\d+)$";
+                    String upgradeCard = "^upgrade\\s+card\\s+(?<name>\\d+)$";
+                    Matcher buy = getCommandMatcher(command, buyCard);
+                    Matcher upgrade = getCommandMatcher(command, upgradeCard);
+                    if (!buy.matches() && !upgrade.matches()) System.out.println("invalid command!");
+                    else if (buy.matches()) {
+                        String name = buy.group("name");
+                        if (getCardByName(name) != null) {
+                            if (user.getCoin() < getCardByName(name).getPrice())
+                                System.out.println("not enough money");
+                            else
+                                user.addToDeck(getCardByName(name));
+                        } else if (getSpellByName(name) != null) {
+                            if (user.getCoin() < getSpellByName(name).getPrice())
+                                System.out.println("not enough money");
+                            else
+                                user.addToDeck(getSpellByName(name));
+                        }
+                    } else if (upgrade.matches()) {
+                        String name = upgrade.group("name");
+                        user.upgradeCard(name);
                     }
                 }
-                else if(upgrade.matches()){
-                    String name=upgrade.group("name");
-                    user.upgradeCard(name);
-                }
+            } else if (input.equals("show profile")) {
+                user.showProfile();
             }
-        }
-        else if(input.equals("show profile")){
-            user.showProfile();
+        } catch (NullPointerException e) {
+            System.out.println(e);
         }
     }
 }
