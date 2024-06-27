@@ -1,0 +1,17 @@
+add card <name> <defense/attack> <duration> <damage> <upgrade level> <upgrade cost> <price>
+
+add card QUILIN 37 4 48 5 50 245
+add card HIPPOGRIFF 28 4 32 3 30 108
+add card PHONIX 35 5 50 7 91 315
+add card CENTAUR 25 3 24 2 20 66
+add card UNICORN 31 5 50 4 45 164
+add card NIFFLER 23 1 10 2 15 66
+add card THESTRAL 24 1 11 2 10 70
+add card HOUSEELF 30 3 27 4 35 156
+add card DEATHEATOR 33 4 36 6 72 256
+add card BOGGART 21 1 10 2 20 62
+add card WERWOLF 24 3 21 3 30 93
+add card ARAGOG 22 2 16 2 25 60
+add card VAMPIRE 26 3 30 4 40 144
+add card BASILLISK 35 5 40 7 84 301
+add card DEMENTOR 39 5 50 8 100 392
