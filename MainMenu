@@ -1,0 +1,21 @@
+import java.util.ArrayList;
+
+public class MainMenu {
+    private ArrayList<Damage_Heal> shopCards=new ArrayList<>();
+    private ArrayList<Spell> shopSpells=new ArrayList<>();
+    public ArrayList<Damage_Heal> getShopCards(){return shopCards;}
+    public void addDamage_Heal(Damage_Heal card){
+        shopCards.add(card);
+    }
+    public Damage_Heal getCardByName(String name){
+        for(Damage_Heal card : shopCards)
+            if (card.getName().equals(name))
+                return card;
+        return null;
+    }
+    public void showShopCards(){
+        int num=0;
+        for(Damage_Heal card :shopCards)
+            System.out.println(++num+". name: "+card.getName()+"defence_attack: "+card.getDefence_attack()+"duration: "+card.getDuration()+"damage: "+card.getDamage()+"upgradeLeve: "+card.getUpgradeLevel()+"upgradeCost: "+card.getUpgradeCost());
+    }
+}
