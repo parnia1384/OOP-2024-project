@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainMenu {
     private ArrayList<Damage_Heal> shopCards=new ArrayList<>();
@@ -12,6 +13,19 @@ public class MainMenu {
             if (card.getName().equals(name))
                 return card;
         return null;
+    }
+    public void addSpell(){
+        Spell peeves=new Spell("PEEVES");
+        Spell sectumsempra=new Spell("SECTUMSEMPRA");
+        Spell cornishPixie=new Spell("CORNISH PIXIE");
+        Spell hedwig=new Spell("HEDWIG");
+        Spell madamPomfrey=new Spell("MADAM POMFREY");
+        Spell merpeople=new Spell("MERPEOPLE");
+        Spell whompingWillow=new Spell("WHOMPING WILLOW");
+        Spell goblin=new Spell("GOBLIN");
+        Spell patronus=new Spell("PATRONUS");
+        Spell fluffy=new Spell("FLUFFY");
+        Collections.addAll(shopSpells,peeves,sectumsempra,cornishPixie,hedwig,madamPomfrey,merpeople,whompingWillow,goblin,patronus,fluffy);
     }
     public void showShopCards(){
         int num=0;
