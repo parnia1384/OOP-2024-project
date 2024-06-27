@@ -43,18 +43,18 @@ public class MainMenu {
     public void showShopCards(){
         int num=0;
         for(Damage_Heal card :shopCards)
-            System.out.println(++num+". name: "+card.getName()+"defence_attack: "+card.getDefence_attack()+"duration: "+card.getDuration()+"damage: "+card.getDamage()+"upgradeLeve: "+card.getUpgradeLevel()+"upgradeCost: "+card.getUpgradeCost()+"price: "+card.getPrice());
+            System.out.println(++num+". name: "+card.getName()+" defence_attack: "+card.getDefence_attack()+" duration: "+card.getDuration()+" damage: "+card.getDamage()+" upgradeLeve: "+card.getUpgradeLevel()+" upgradeCost: "+card.getUpgradeCost()+" price: "+card.getPrice());
     }
     public void showCardsNotInDeck(User user){
         int num=0;
         System.out.println("Damage/Heal Cards:");
         for(Damage_Heal card : shopCards)
             if(user.getCardFromDeckByName(card.getName())==null)
-                System.out.println(++num+". name: "+card.getName()+"defence_attack: "+card.getDefence_attack()+"duration: "+card.getDuration()+"damage: "+card.getDamage()+"upgradeLeve: "+card.getUpgradeLevel()+"upgradeCost: "+card.getUpgradeCost()+"price: "+card.getPrice());
+                System.out.println(++num+". name: "+card.getName()+" defence_attack: "+card.getDefence_attack()+" duration: "+card.getDuration()+" damage: "+card.getDamage()+" upgradeLeve: "+card.getUpgradeLevel()+" upgradeCost: "+card.getUpgradeCost()+" price: "+card.getPrice());
         System.out.println("Spell Cards:");
         for(Spell card: shopSpells)
             if(user.getCardFromDeckByName(card.getName())==null)
-                System.out.println(++num+". name: "+card.getName()+"price: "+card.getPrice());
+                System.out.println(++num+". name: "+card.getName()+" price: "+card.getPrice());
     }
     public void run(Scanner scanner, User user) {
         try {
