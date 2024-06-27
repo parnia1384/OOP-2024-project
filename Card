@@ -1,0 +1,35 @@
+import java.util.PrimitiveIterator;
+
+abstract class Card {
+    private String name;
+    public Card(String name){this.name=name;}
+    public String getName(){return name;}
+}
+class Spell extends Card{
+    public Spell(String name){super(name);}
+    public void Deploy(){}
+}
+class Damage_Heal extends Card{
+    private int defence_attack, duration, damage, upgradeLevel, upgradeCost;
+    public Damage_Heal(String name, int defence_attack, int duration, int damage, int upgradeLevel, int upgradeCost)
+    {
+        super(name);
+        this.defence_attack=defence_attack;
+        this.damage=damage;
+        this.duration=duration;
+        this.upgradeCost=upgradeCost;
+        this.upgradeLevel=upgradeLevel;
+    }
+    public int getDamage(){return damage;}
+    public int getDefence_attack(){return defence_attack;}
+    public int getDuration(){return duration;}
+    public int getUpgradeLevel(){return upgradeLevel;}
+    public int getUpgradeCost(){return upgradeCost;}
+    public void edit(int defence_attack, int duration, int damage, int upgradeLevel, int upgradeCost){
+        this.defence_attack=defence_attack;
+        this.damage=damage;
+        this.duration=duration;
+        this.upgradeCost=upgradeCost;
+        this.upgradeLevel=upgradeLevel;
+    }
+}
