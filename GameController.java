@@ -22,6 +22,10 @@ public class GameController {
         while(true){
             String command = scan.nextLine();
             if(command.equals("Exit")) break;
+            else if (command.matches("main menu")){
+                System.out.println("entered main menu");
+                mainMenu.run(scan,loggedInUser);
+            }
             else if(command.matches(signup)){
                 matcher = getCommandMatcher(command, signup);
                 registryMenu.signup(matcher);
@@ -54,9 +58,10 @@ public class GameController {
         return pattern.matcher(input);
     }
     private void admin(Matcher matcher, Scanner scanner){
-        String addCard="^add\\s+card\\s+(?<name>\\w+)\\s+(?<defenceAttack>\\d+)\\s+(?<duration>\\d+)\\s+(?<damage>\\d+)\\s+(?<upgradeLevel>\\d+)\\s+(?<upgradeCost>\\d+)$";
-        String editCard="^edit\\s+card\\s+(?<number>\\d+)\\s+(?<name>\\w+)\\s+(?<defenceAttack>\\d+)\\s+(?<duration>\\d+)\\s+(?<damage>\\d+)\\s+(?<upgradeLevel>\\d+)\\s+(?<upgradeCost>\\d+)$";
+        String addCard="^add\\s+card\\s+(?<name>\\w+)\\s+(?<defenceAttack>\\d+)\\s+(?<duration>\\d+)\\s+(?<damage>\\d+)\\s+(?<upgradeLevel>\\d+)\\s+(?<upgradeCost>\\d+)\\s+(?<price>\\d+)$";
+        String editCard="^edit\\s+card\\s+(?<number>\\d+)\\s+(?<name>\\w+)\\s+(?<defenceAttack>\\d+)\\s+(?<duration>\\d+)\\s+(?<damage>\\d+)\\s+(?<upgradeLevel>\\d+)\\s+(?<upgradeCost>\\d+)\\s+(?<price>\\d+)$";
         String deleteCard="^delete\\s+card\\s+(?<number>\\d+)$";
+        String showCards="^show\\s+cards$";
 
         if(!matcher.matches()) System.out.println("invalid input");
         else{
@@ -69,9 +74,12 @@ public class GameController {
                     Matcher add=getCommandMatcher(command,addCard);
                     Matcher edit=getCommandMatcher(command,editCard);
                     Matcher delete=getCommandMatcher(command,deleteCard);
-                    if(!add.matches()&&!edit.matches()&&delete.matches()) System.out.println("invalid request");
+                    Matcher showCard=getCommandMatcher(command,showCards);
+                    if(!add.matches()&&!edit.matches()&&delete.matches()&&!showCard.matches()) System.out.println("invalid request");
                     else {
-                        if(add.matches()){
+                        if(showCard.matches())
+                            mainMenu.getShopCards();
+                        else if(add.matches()){
                             if(mainMenu.getCardByName(add.group("name"))!=null)
                                 System.out.println("card already exists");
                             else if(Integer.parseInt(add.group("defenceAttack"))<10||Integer.parseInt(add.group("defenceAttack"))>100)
@@ -81,7 +89,7 @@ public class GameController {
                             else if(Integer.parseInt(add.group("damage"))<10||Integer.parseInt(add.group("damage"))>50)
                                 System.out.println("invalid damage");
                             else {
-                                Damage_Heal newCard=new Damage_Heal(add.group("name"),Integer.parseInt(add.group("defenceAttack")),Integer.parseInt(add.group("duration")),Integer.parseInt(add.group("damage")),Integer.parseInt(add.group("upgradeLevel")),Integer.parseInt(add.group("upgradeCost")));
+                                Damage_Heal newCard=new Damage_Heal(add.group("name"),Integer.parseInt(add.group("defenceAttack")),Integer.parseInt(add.group("duration")),Integer.parseInt(add.group("damage")),Integer.parseInt(add.group("upgradeLevel")),Integer.parseInt(add.group("upgradeCost")),Integer.parseInt(add.group("price")));
                                 mainMenu.addDamage_Heal(newCard);
                                 System.out.println("card added successfully");
                             }
@@ -100,7 +108,7 @@ public class GameController {
                                 if(answer.equalsIgnoreCase("y"))
                                 {
                                     System.out.println("card edited successfully");
-                                    mainMenu.getCardByName(edit.group("name")).edit(Integer.parseInt(edit.group("defenceAttack")),Integer.parseInt(edit.group("duration")),Integer.parseInt(edit.group("damage")),Integer.parseInt(edit.group("upgradeLevel")),Integer.parseInt(edit.group("upgradeCost")));
+                                    mainMenu.getCardByName(edit.group("name")).edit(Integer.parseInt(edit.group("defenceAttack")),Integer.parseInt(edit.group("duration")),Integer.parseInt(edit.group("damage")),Integer.parseInt(edit.group("upgradeLevel")),Integer.parseInt(edit.group("upgradeCost")),Integer.parseInt(add.group("price")));
                                 }
                             }
                         }
