@@ -5,7 +5,12 @@ public class Block {
         this.card=null;
         this.isDestroyed=false;
     }
+    public Card getCard(){return card;}
+    public boolean isDestroyed(){return isDestroyed;}
     public void setDestroyed(){this.isDestroyed=true;}
+    public void setCard(Damage_Heal card){
+        this.card=card;
+    }
     public void printBlock(){
         if(isDestroyed)
             System.out.print("destroyed");
