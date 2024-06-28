@@ -7,7 +7,6 @@ public class GameController {
     final private RegistryMenu registryMenu = new RegistryMenu();
     private MainMenu mainMenu = new MainMenu();
     private User loggedInUser = null;
-    private User competitor = null;
     final private Outputs output = new Outputs();
     public void run(){
         mainMenu.addSpell();
@@ -30,7 +29,7 @@ public class GameController {
                 if(loggedInUser == null) System.out.println("Please login first");
                 else{
                     System.out.println("entered main menu");
-                    mainMenu.run(scan,loggedInUser);
+                    mainMenu.run(scan,loggedInUser,registryMenu,output);
                 }
             }
             else if(command.matches(login)){
@@ -60,7 +59,7 @@ public class GameController {
     }
     public void getInformationFromFile(){
         try{
-            File myFile = new File("C:\\Users\\ASUS\\Desktop\\University\\Term2\\OOP\\proj_group7\\src\\User Information.txt");
+            File myFile = new File("C:\\Users\\ASUS\\Desktop\\OOP\\Phase1\\file.txt");
             Scanner scan = new Scanner(myFile);
             ArrayList<User> users = new ArrayList<>();
             String[] parts;
@@ -88,7 +87,7 @@ public class GameController {
     public void writeInformationInFile(){
         ArrayList<User> users = registryMenu.getUsers();
         try{
-            File myFile = new File("C:\\Users\\ASUS\\Desktop\\University\\Term2\\OOP\\proj_group7\\src\\User Information.txt");
+            File myFile = new File("C:\\Users\\ASUS\\Desktop\\OOP\\Phase1\\file.txt");
             FileWriter writer = new FileWriter(myFile);
             for(User user : users){
                 String str = user.toString();
@@ -124,12 +123,12 @@ public class GameController {
         String editCard = "edit card <name> <defenceAttack> <duration> <damage> <upgradeLevel> <upgradeCost> <price>";
         String deleteCard = "delete card <number>";
         System.out.println("To signup: " + signUp + "\nTo select recovery question after registration: " + chooseQuestion + "\nTo change password: " + changePassword
-        + "\nTo login: " + login + "\nTo see users: Show players\nTo enter main menu: main menu\n_______________\nIf you are an admin:"
-        + admin + "\nTo add card: " + addCardByAdmin + "\nTo edit card: " + editCard + "\nTo delete a card: " + deleteCard + "\nTo logout: back"
-        + "\nTo see cards write: show cards\n_______________\nIf you are in the main menu:\nTo enter the shop: shop menu\nTo enter the profile menu: Profile menu\n"
-        + "_______________\nIf you are in profile menu:\nTo see your Information: Show profile\nTo change your password: Profile change -o <oldPass> -n <newPass>\nTo change your username: " +
-        "Profile change -u <newUsername>\nTo change your nickname: Profile change -n <newNickname>\nTo change your email: Profile change -e <newEmail>\nTo return to the main menu: Exit profile menu"
-        + "\n_______________\nIf you are in the shop:\nTo buy a new card: buy card <name>\nTo upgrade a card: upgrade card <name>\nTo return to the main menu: back\n_______________\n");
+                + "\nTo login: " + login + "\nTo see users: Show players\nTo enter main menu: main menu\n_______________\nIf you are an admin:"
+                + admin + "\nTo add card: " + addCardByAdmin + "\nTo edit card: " + editCard + "\nTo delete a card: " + deleteCard + "\nTo logout: back"
+                + "\nTo see cards write: show cards\n_______________\nIf you are in the main menu:\nTo enter the shop: shop menu\nTo enter the profile menu: Profile menu\n"
+                + "_______________\nIf you are in profile menu:\nTo see your Information: Show profile\nTo change your password: Profile change -o <oldPass> -n <newPass>\nTo change your username: " +
+                "Profile change -u <newUsername>\nTo change your nickname: Profile change -n <newNickname>\nTo change your email: Profile change -e <newEmail>\nTo return to the main menu: Exit profile menu"
+                + "\n_______________\nIf you are in the shop:\nTo buy a new card: buy card <name>\nTo upgrade a card: upgrade card <name>\nTo return to the main menu: back\n_______________\n");
     }
     private void showPlayers(){
         ArrayList<User> users = registryMenu.getUsers();
@@ -206,7 +205,7 @@ public class GameController {
                                 if(answer.equalsIgnoreCase("y"))
                                 {
                                     System.out.println("card deleted successfully");
-                                    mainMenu.getShopCards().remove(mainMenu.getShopCards().get(Integer.parseInt(delete.group("number"))));
+                                    mainMenu.getShopCards().remove(mainMenu.getShopCards().get(Integer.parseInt(delete.group("number"))-1));
                                 }
                             }
                         }
