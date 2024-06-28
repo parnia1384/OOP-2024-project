@@ -122,8 +122,6 @@ public class User {
     public void setAnswer(String answer){
         this.answer = answer;
     }
-    public void showProfile(){
-    }
     @Override
     public String toString(){
         String userInformation = "new user:\n" + username + " " + password + " " + email + " " + nickname + " " + numberOfQuestion + " " + answer + " " + coin + " " + exp + " " + hp + '\n';
