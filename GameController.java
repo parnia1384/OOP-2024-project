@@ -13,7 +13,7 @@ public class GameController {
         mainMenu.addSpell();
         Scanner scan = new Scanner(System.in);
         String signup = "user create -u (\\S+) -p (\\S+) (\\S+) -email (\\S+) -n (\\S+)";
-        String chooseSecurityQuestion = "question pick -q (\\S+) -a (\\S+) -c (\\S+)";
+        String signupWithRandomPassword = "user create -u (\\S+) -p (\\S+) (\\S+) -email (\\S+) -n (\\S+)";
         String login = "user login -u (\\S+) -p (\\S+)";
         String logout = "log out";
         String forgotPassword = "Forgot my password -u (\\S+)";
@@ -24,7 +24,7 @@ public class GameController {
             if(command.equals("Exit")) break;
             else if(command.matches(signup)){
                 matcher = getCommandMatcher(command, signup);
-                registryMenu.signup(matcher);
+                registryMenu.signup(matcher, scan);
             }
             else if (command.matches("main menu")){
                 if(loggedInUser == null) System.out.println("Please login first");
@@ -32,10 +32,6 @@ public class GameController {
                     System.out.println("entered main menu");
                     mainMenu.run(scan,loggedInUser);
                 }
-            }
-            else if(command.matches(chooseSecurityQuestion)){
-                matcher = getCommandMatcher(command, chooseSecurityQuestion);
-                registryMenu.chooseSecurityQuestion(matcher, scan);
             }
             else if(command.matches(login)){
                 matcher = getCommandMatcher(command, login);
@@ -128,9 +124,12 @@ public class GameController {
         String editCard = "edit card <name> <defenceAttack> <duration> <damage> <upgradeLevel> <upgradeCost> <price>";
         String deleteCard = "delete card <number>";
         System.out.println("To signup: " + signUp + "\nTo select recovery question after registration: " + chooseQuestion + "\nTo change password: " + changePassword
-        + "\nTo login: " + login + "\nTo go to your profile menu when you are logged in: Profile menu\nTo see users: Show players\nTo enter main menu: main menu\n_________\nIf you are an admin:"
+        + "\nTo login: " + login + "\nTo see users: Show players\nTo enter main menu: main menu\n_______________\nIf you are an admin:"
         + admin + "\nTo add card: " + addCardByAdmin + "\nTo edit card: " + editCard + "\nTo delete a card: " + deleteCard + "\nTo logout: back"
-        + "\nTo see cards write: show cards" + "\n________");
+        + "\nTo see cards write: show cards\n_______________\nIf you are in the main menu:\nTo enter the shop: shop menu\nTo enter the profile menu: Profile menu\n"
+        + "_______________\nIf you are in profile menu:\nTo see your Information: Show profile\nTo change your password: Profile change -o <oldPass> -n <newPass>\nTo change your username: " +
+        "Profile change -u <newUsername>\nTo change your nickname: Profile change -n <newNickname>\nTo change your email: Profile change -e <newEmail>\nTo return to the main menu: Exit profile menu"
+        + "\n_______________\nIf you are in the shop:\nTo buy a new card: buy card <name>\nTo upgrade a card: upgrade card <name>\nTo return to the main menu: back\n_______________\n");
     }
     private void showPlayers(){
         ArrayList<User> users = registryMenu.getUsers();
