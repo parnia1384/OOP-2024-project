@@ -75,8 +75,8 @@ public class MainMenu {
                 while (true) {
                     String command = scanner.nextLine();
                     if (command.equals("back")) break;
-                    String buyCard = "^buy\\s+card\\s+(?<name>\\d+)$";
-                    String upgradeCard = "^upgrade\\s+card\\s+(?<name>\\d+)$";
+                    String buyCard = "^buy\\s+card\\s+(?<name>\\w+)$";
+                    String upgradeCard = "^upgrade\\s+card\\s+(?<name>\\w+)$";
                     Matcher buy = getCommandMatcher(command, buyCard);
                     Matcher upgrade = getCommandMatcher(command, upgradeCard);
                     if (!buy.matches() && !upgrade.matches()) System.out.println("invalid command!");
@@ -84,16 +84,17 @@ public class MainMenu {
                         String name = buy.group("name");
                         if (getCardByName(name) != null) {
                             if (user.getCoin() < getCardByName(name).getPrice())
-                                System.out.println("not enough money");
+                                System.out.println("not enough money!");
                             else
                                 user.addToDeck(getCardByName(name));
                         }
                         else if (getSpellByName(name) != null) {
                             if (user.getCoin() < getSpellByName(name).getPrice())
-                                System.out.println("not enough money");
+                                System.out.println("not enough money!");
                             else
                                 user.addToDeck(getSpellByName(name));
                         }
+                        else System.out.println("card doens't exist!");
                     }
                     else if (upgrade.matches()) {
                         String name = upgrade.group("name");
