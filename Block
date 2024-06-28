@@ -1,0 +1,17 @@
+public class Block {
+    private boolean isDestroyed;
+    private Card card;
+    public Block(){
+        this.card=null;
+        this.isDestroyed=false;
+    }
+    public void setDestroyed(){this.isDestroyed=true;}
+    public void printBlock(){
+        if(isDestroyed)
+            System.out.print("destroyed");
+        else if(card!=null)
+            System.out.print(card.getName());
+        else
+            System.out.print("\t");
+    }
+}
