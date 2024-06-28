@@ -35,13 +35,9 @@ public class ProfileMenu extends RegistryMenu{
             else System.out.println("invalid input!");
         }
     }
-    private Matcher getCommandMatcher(String input, String regex){
-        Pattern pattern=Pattern.compile(regex);
-        return pattern.matcher(input);
-    }
     private void showProfile(User user){
         System.out.println("Username: " + user.getUsername() + "\nPassword: " + user.getPassword() + "\nEmail: " + user.getEmail() + "\nNickname: " + user.getNickname()
-        + "\nLevel: " + user.getLevel() + "\nExp: " + user.getExp() + "\nHp: " + user.getHp());
+        + "\nLevel: " + user.getLevel() + "\nExp: " + user.getExp() + "\nHp: " + user.getHp() + "\nCoin: " + user.getCoin());
     }
     private void changeUsername(Matcher matcher, User user){
         if(!matcher.matches()) System.out.println("invalid input!");
