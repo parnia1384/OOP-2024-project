@@ -1,11 +1,13 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class RegistryMenu {
     private ArrayList<User> users = new ArrayList<>();
     private User signedUpUser = null;
     final protected Outputs output = new Outputs();
-    public void signup(Matcher matcher){
+    public void signup(Matcher matcher, Scanner scanner){
         if(!matcher.matches()) System.out.println("invalid input!");
         else{
             String username = matcher.group(1);
@@ -30,6 +32,17 @@ public class RegistryMenu {
                 signedUpUser = newUser;
                 users.add(newUser);
                 System.out.println(output.successfullyAccount);
+                String chooseSecurityQuestion = "question pick -q (\\S+) -a (\\S+) -c (\\S+)";
+                String command;
+                while(true){
+                    command = scanner.nextLine();
+                    if(command.matches(chooseSecurityQuestion)){
+                        matcher = getCommandMatcher(command, chooseSecurityQuestion);
+                        chooseSecurityQuestion(matcher, scanner);
+                        break;
+                    }
+                    else System.out.println("You have to choose your security question first!");
+                }
             }
         }
     }
@@ -86,6 +99,10 @@ public class RegistryMenu {
             if(user.getUsername().equals(username))
                 return user;
         return null;
+    }
+    protected Matcher getCommandMatcher(String input, String regex){
+        Pattern pattern=Pattern.compile(regex);
+        return pattern.matcher(input);
     }
     protected boolean isUsernameCorrect(String username){
         for(int i = 0; i < username.length(); i++){
