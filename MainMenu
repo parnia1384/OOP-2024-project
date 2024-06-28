@@ -57,11 +57,12 @@ public class MainMenu {
             if(user.getCardFromDeckByName(card.getName())==null)
                 System.out.println(++num+". name: "+card.getName()+" price: "+card.getPrice());
     }
-    public void run(Scanner scanner, User user) {
+    public void run(Scanner scanner, User user, RegistryMenu registryMenu, Outputs outputs) {
         while(true){
             String input = scanner.nextLine();
             if (input.equals("start game")) {
-
+                Game game=new Game(user,scanner,registryMenu,outputs);
+                game.run(shopCards,shopSpells);
             }
             else if (input.equals("show deck")) {
                 user.showDeck();
