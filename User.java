@@ -1,4 +1,7 @@
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 public class User {
     private String username;
     private String password;
@@ -11,9 +14,11 @@ public class User {
     private int hp;
     private int coin;
     private int level;
+    private String character;
     private ArrayList<Damage_Heal> cardDeck = new ArrayList<>();
     private ArrayList<Spell> spellDeck = new ArrayList<>();
-    final private ArrayList<Games> games = new ArrayList<>();
+    final private ArrayList<Game> games = new ArrayList<>();
+    Random random = new Random();
     User(String username, String password, String email, String nickname){
         this.username = username;
         this.password = password;
@@ -22,8 +27,32 @@ public class User {
         this.hp = 100;
         this.level = 1;
     }
-    public void getRandDeck(ArrayList<Damage_Heal> cards, ArrayList<Spell> spells){
+    public ArrayList<Damage_Heal> getCardDeck(){return cardDeck;}
+    public ArrayList<Spell> getSpellDeck(){return spellDeck;}
+    public ArrayList<Card> getDeck(){
+        ArrayList<Card> deck = new ArrayList<>();
+        deck.addAll(spellDeck);
+        deck.addAll(cardDeck);
+        return deck;
     }
+
+    public void getRandDeck(ArrayList<Damage_Heal> cards, ArrayList<Spell> spells) {
+        ArrayList<Damage_Heal> tempCards = new ArrayList<>(cards);
+        ArrayList<Spell> tempSpells = new ArrayList<>(spells);
+        for (int i = 0; i < 5; i++) {
+            int randomIndex = random.nextInt(tempSpells.size());
+            Spell card = tempSpells.get(randomIndex);
+            spellDeck.add(card);
+            tempSpells.remove(randomIndex);
+        }
+        for (int i = 0; i < 15; i++) {
+            int randomIndex = random.nextInt(tempCards.size());
+            Damage_Heal card = tempCards.get(randomIndex);
+            cardDeck.add(card);
+            tempCards.remove(randomIndex);
+        }
+    }
+    public void setCharacter(String character){this.character=character;}
     public void addToDeck(Damage_Heal card){cardDeck.add(card);}
     public void addToDeck(Spell card){spellDeck.add(card);}
 
@@ -42,7 +71,7 @@ public class User {
     public void showDeck(){
         int num = 0;
         for(Damage_Heal card: cardDeck)
-            System.out.println(++num+". name: "+card.getName()+"defence_attack: "+card.getDefence_attack()+"duration: "+card.getDuration()+"damage: "+card.getDamage()+"upgradeLeve: "+card.getUpgradeLevel()+"upgradeCost: "+card.getUpgradeCost());
+            System.out.println(++num+". name: "+card.getName()+" defence_attack: "+card.getDefence_attack()+" duration: "+card.getDuration()+" damage: "+card.getDamage()+" upgradeLeve: "+card.getUpgradeLevel()+" upgradeCost: "+card.getUpgradeCost());
         for(Spell card: spellDeck)
             System.out.println(++num+". name: "+card.getName());
     }
