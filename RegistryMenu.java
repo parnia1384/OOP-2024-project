@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,6 +63,11 @@ public class RegistryMenu {
             if(questionNumber.equals("1")) signedUpUser.setNumberOfQuestion(1);
             if(questionNumber.equals("2")) signedUpUser.setNumberOfQuestion(2);
             if(questionNumber.equals("3")) signedUpUser.setNumberOfQuestion(3);
+            CaptchaGenerator captchaGenerator = new CaptchaGenerator();
+            Random random = new Random();
+            int i = random.nextInt();
+            if(i % 2 == 0) captchaGenerator.simpleCaptcha(scanner);
+            else captchaGenerator.asciiArtCaptcha(scanner);
             signedUpUser.setAnswer(answer);
             System.out.println("welcome " + signedUpUser.getUsername() + "!");
             signedUpUser = null;
