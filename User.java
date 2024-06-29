@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -18,7 +17,7 @@ public class User {
     private String character;
     private ArrayList<Damage_Heal> cardDeck = new ArrayList<>();
     private ArrayList<Spell> spellDeck = new ArrayList<>();
-    final private ArrayList<Game> games = new ArrayList<>();
+    private ArrayList<String> gamesHistory = new ArrayList<>();
     Random random = new Random();
     User(String username, String password, String email, String nickname){
         this.username = username;
@@ -30,7 +29,6 @@ public class User {
         this.coin = 300;
         this.score=10;
     }
-    //blank structure is new here:
     User(){
         this.username = " ";
     }
@@ -196,7 +194,15 @@ public class User {
     public void setAnswer(String answer){
         this.answer = answer;
     }
-    //check me out!!
+    public void setGamesHistory(ArrayList<String> file){
+        this.gamesHistory = file;
+    }
+    public void addGame(String game){
+        this.gamesHistory.add(game);
+    }
+    public ArrayList<String> getGamesHistory(){
+        return gamesHistory;
+    }
     @Override
     public String toString(){
         String userInformation = "new user:\n" + username + " " + password + " " + email + " " + nickname + " " + numberOfQuestion + " " + answer + " " + coin + " " + exp + " " + hp + '\n';
@@ -206,6 +212,9 @@ public class User {
         userInformation += "Done!\nSpell cards:\n";
         for(Spell card : spellDeck)
             userInformation += (card.getName() + '\n');
+        userInformation += "Done!\nmy games:\n";
+        for(String game : gamesHistory)
+            userInformation += (game + '\n');
         userInformation += "Done!\n";
         return userInformation;
     }
