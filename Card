@@ -48,13 +48,13 @@ class Spell extends Card{
         } else if(name.equals("SECTUMSEMPRA")){//تضعیف کننده کارت حریف
             if(isHostPlaying){
                 for(int i=0; i<5; i++)
-                    if(guestCards[i].getClass().equals(Damage_Heal.class)){
+                    if(guestCards[i]!=null&&guestCards[i].getClass().equals(Damage_Heal.class)){
                         ((Damage_Heal)guestCards[i]).reduceDamage();
                     }
             }
             else {
                 for(int i=0; i<5; i++)
-                    if(hostCards[i].getClass().equals(Damage_Heal.class)){
+                    if(guestCards[i]!=null&&hostCards[i].getClass().equals(Damage_Heal.class)){
                         ((Damage_Heal)hostCards[i]).reduceDamage();
                     }
             }
@@ -64,7 +64,7 @@ class Spell extends Card{
                 String answer;
                 while (true) {
                     answer = scanner.nextLine();
-                    if(answer.equals("1")||answer.equals("2")||answer.equals("3")||answer.equals("4")||answer.equals("5"))
+                    if((answer.equals("1")||answer.equals("2")||answer.equals("3")||answer.equals("4")||answer.equals("5"))&&hostCards[Integer.parseInt(answer)-1]!=null)
                         break;
                     System.out.println("invalid number! try again.");
                 }
@@ -74,7 +74,7 @@ class Spell extends Card{
                 String answer;
                 while (true) {
                     answer = scanner.nextLine();
-                    if(answer.equals("1")||answer.equals("2")||answer.equals("3")||answer.equals("4")||answer.equals("5"))
+                    if((answer.equals("1")||answer.equals("2")||answer.equals("3")||answer.equals("4")||answer.equals("5"))&&guestCards[Integer.parseInt(answer)-1]!=null)
                         break;
                     System.out.println("invalid number! try again.");
                 }
@@ -127,12 +127,12 @@ class Spell extends Card{
         }else if(name.equals("PATRONUS")){//سپر
             if(isHostPlaying){
                 for(int i=0; i<21; i++)
-                    if(hostTimeLine[i].getCard()!=null&&hostTimeLine[i].hasFailed())
+                    if(hostTimeLine[i].getCard()!=null&&hostTimeLine[i].hasFailed()&&!hostTimeLine[i].isDestroyed())
                         hostTimeLine[i].unsetFailed();
             }
             else {
                 for(int i=0; i<21; i++)
-                    if(guestTimeLine[i].getCard()!=null&&guestTimeLine[i].hasFailed())
+                    if(guestTimeLine[i].getCard()!=null&&guestTimeLine[i].hasFailed()&&!guestTimeLine[i].isDestroyed())
                         guestTimeLine[i].unsetFailed();
             }
         }else if(name.equals("FLUFFY")){//غیر فعال کننده همه کارت های تایم لاین حریف جز PHONIX
