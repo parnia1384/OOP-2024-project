@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -13,6 +14,7 @@ public class User {
     private int hp;
     private int coin;
     private int level;
+    private int score;
     private String character;
     private ArrayList<Damage_Heal> cardDeck = new ArrayList<>();
     private ArrayList<Spell> spellDeck = new ArrayList<>();
@@ -26,10 +28,23 @@ public class User {
         this.hp = 100;
         this.level = 1;
         this.coin = 300;
+        this.score=10;
     }
     //blank structure is new here:
     User(){
         this.username = " ";
+    }
+    public void updateLevel(){
+        int tempLevel=level;
+        while(exp>150*level*level){
+            exp-=150*level*level;
+            level++;
+        }
+        if(level>tempLevel){
+            System.out.println(username+"'s level increased to "+level+"! "+100*level+" coins added to their wallet.");
+            coin+=100*level;
+            score+=100*(level-tempLevel);
+        }
     }
     public ArrayList<Damage_Heal> getCardDeck(){return cardDeck;}
     public ArrayList<Spell> getSpellDeck(){return spellDeck;}
