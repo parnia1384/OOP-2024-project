@@ -61,24 +61,24 @@ class Spell extends Card{
         } else if(name.equals("CORNISH PIXIE")){//کپی کننده
             System.out.println("which card do you wish to copy?");
             if(isHostPlaying){
-                int n;
+                String answer;
                 while (true) {
-                    n = scanner.nextInt();
-                    if(n>=1&&n<6)
+                    answer = scanner.nextLine();
+                    if(answer.equals("1")||answer.equals("2")||answer.equals("3")||answer.equals("4")||answer.equals("5"))
                         break;
                     System.out.println("invalid number! try again.");
                 }
-                hostCards[5]=hostCards[n-1];
+                hostCards[5]=hostCards[Integer.parseInt(answer)-1];
             }
             else {
-                int n;
+                String answer;
                 while (true) {
-                    n = scanner.nextInt();
-                    if(n>=1&&n<6)
+                    answer = scanner.nextLine();
+                    if(answer.equals("1")||answer.equals("2")||answer.equals("3")||answer.equals("4")||answer.equals("5"))
                         break;
                     System.out.println("invalid number! try again.");
                 }
-                guestCards[5]=guestCards[n-1];
+                guestCards[5]=guestCards[Integer.parseInt(answer)-1];
             }
         }else if(name.equals("HEDWIG")){//تعمیرکننده
             for(int i=0; i<21; i++){
@@ -96,26 +96,26 @@ class Spell extends Card{
         }else if(name.equals("MERPEOPLE")){//حذف کارت از دست حریف
             System.out.println("which of you opponent's cards do you wish to have?");
             if(isHostPlaying){
-                int n;
+                String answer;
                 while (true){
-                    n=scanner.nextInt();
-                    if(guestCards[n]!=null||n<=0||n>5)
+                    answer=scanner.nextLine();
+                    if(guestCards[Integer.parseInt(answer)-1]!=null||(answer.equals("1")||answer.equals("2")||answer.equals("3")||answer.equals("4")||answer.equals("5")))
                         break;
                     System.out.println("invalid number! try again.");
                 }
-                hostCards[5]=guestCards[n-1];
-                guestCards[n-1]=null;
+                hostCards[5]=guestCards[Integer.parseInt(answer)-1];
+                guestCards[Integer.parseInt(answer)-1]=null;
             }
             else {
-                int n;
+                String answer;
                 while (true){
-                    n=scanner.nextInt();
-                    if(hostCards[n]!=null||n<=0||n>5)
+                    answer=scanner.nextLine();
+                    if(hostCards[Integer.parseInt(answer)-1]!=null||(answer.equals("1")||answer.equals("2")||answer.equals("3")||answer.equals("4")||answer.equals("5")))
                         break;
                     System.out.println("invalid number! try again.");
                 }
-                guestCards[5]=hostCards[n-1];
-                hostCards[n-1]=null;
+                guestCards[5]=hostCards[Integer.parseInt(answer)-1];
+                hostCards[Integer.parseInt(answer)-1]=null;
             }
         }else if(name.equals("WHOMPING WILLOW")){//کم کننده راند
             round++;
