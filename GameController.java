@@ -16,7 +16,7 @@ public class GameController {
         String login = "user login -u (\\S+) -p (\\S+)";
         String logout = "log out";
         String forgotPassword = "Forgot my password -u (\\S+)";
-        String admin = "login admin (\\S+)";//-login admin <pass>
+        String admin = "login admin (\\S+)";//-login admin <1234>
         Matcher matcher;
         while(true){
             String command = scan.nextLine();
@@ -65,7 +65,9 @@ public class GameController {
     public void getInformationFromFile(){
         try{
             File myFile = new File("C:\\Users\\ASUS\\Desktop\\University\\Term2\\OOP\\proj_group7\\src\\User Information.txt");
+            File gameHistoryFile = new File("C:\\Users\\ASUS\\Desktop\\University\\Term2\\OOP\\proj_group7\\src\\Game History.txt");
             Scanner scan = new Scanner(myFile);
+            Scanner historyScanner = new Scanner(gameHistoryFile);
             ArrayList<User> users = new ArrayList<>();
             String[] parts;
             User myUser = new User();
@@ -111,8 +113,21 @@ public class GameController {
                         }
                     }
                 }
+                else if(line.equals("my games:")){
+                    String game;
+                    while(true){
+                        game = scan.nextLine();
+                        if(game.equals("Done!")) break;
+                        else myUser.addGame(game);
+                    }
+                }
+            }
+            while(historyScanner.hasNextLine()){
+                String game = historyScanner.nextLine();
+                registryMenu.addGame(game);
             }
             scan.close();
+            historyScanner.close();
             registryMenu.setUsers(users);
         }
         catch (Exception e){
@@ -123,12 +138,18 @@ public class GameController {
         ArrayList<User> users = registryMenu.getUsers();
         try{
             File myFile = new File("C:\\Users\\ASUS\\Desktop\\University\\Term2\\OOP\\proj_group7\\src\\User Information.txt");
+            File gameHistoryFile = new File("C:\\Users\\ASUS\\Desktop\\University\\Term2\\OOP\\proj_group7\\src\\Game History.txt");
+            FileWriter historyWriter = new FileWriter(gameHistoryFile);
             FileWriter writer = new FileWriter(myFile);
             for(User user : users){
                 String str = user.toString();
                 writer.write(str);
             }
             writer.close();
+            for(String game : registryMenu.getGamesHistory()){
+                historyWriter.write(game);
+            }
+            historyWriter.close();
         }
         catch (Exception e){
             System.out.println(e);
