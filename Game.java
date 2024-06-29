@@ -3,22 +3,37 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class Game {
     private User hostPlayer, guestPlayer;
     private boolean doubleMood=false, betMood=false;
     private Block[] hostTimeLine=new Block[21];
     private Block[] guestTimeLine=new Block[21];
-    private Card[] hostCards=new Card[5];
-    private Card[] guestCards=new Card[5];
-    private User winner, loser;
+    private Card[] hostCards=new Card[6];
+    private Card[] guestCards=new Card[6];
     private int betCoin;
     Random random=new Random();
+    private String time, date;
+    private int round;
 
     public Game(User hostPlayer, Scanner scanner, RegistryMenu registryMenu, Outputs outputs){
         this.hostPlayer=hostPlayer;
         chooseMood(scanner, registryMenu, outputs);
         this.betCoin=0;
+        LocalDate currentDate = LocalDate.now();
+        LocalTime currentTime = LocalTime.now();
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+        this.date = currentDate.format(dateFormatter);
+        this.time = currentTime.format(timeFormatter);
+    }
+    public String getDateAndTime(){
+        return date+"\t"+time;
     }
     private Matcher getCommandMatcher(String input, String regex){
         Pattern pattern=Pattern.compile(regex);
@@ -169,54 +184,59 @@ public class Game {
                this.guestTimeLine[i]=new Block();
                this.hostTimeLine[i]=new Block();
            }
+           hostCards[5]=null;
+           guestCards[5]=null;
            hostTimeLine[random.nextInt(21)].setDestroyed();
            guestTimeLine[random.nextInt(21)].setDestroyed();
-           for(int i=1; i<=4; i++){
-               System.out.println("Round "+i+":");
+           round=0;
+           while(true){
+               System.out.println("Round "+(++round)+":");
                showGameDetails();
                System.out.println("Guest: ");
                //place card <name> in block <number>
                //deploy card <name>
-               deploy(scanner,false);
+               deploy(scanner,false, round);
                System.out.println("Host: ");
-               deploy(scanner,true);
+               deploy(scanner,true, round);
                checkTimeLine();
-               System.out.println("Round "+i+" is over");
+               System.out.println("Round "+(round)+" is over");
+               if(round==4)
+                   break;
            }
            checkWinner(cards,spells,scanner);
     }
-    public void deploy(Scanner scanner, Boolean isHostPlaying){
+    public void deploy(Scanner scanner, Boolean isHostPlaying, int round){
         String command=scanner.nextLine();
         if(command.equals("next round"))
             return;
-        String deployCard="^place\\s+card\\s+(?<name>\\w+)\\s+in\\s+block\\s+(?<number>\\w+)$";
-        String deploySpell="^deploy\\s+card\\s+(?<name>\\w+)$";
+        String deployCard="^place\\s+card\\s+(?<name>\\w+(?: \\w+)*)\\s+in\\s+block\\s+(?<number>\\w+)$";
+        String deploySpell="^deploy\\s+card\\s+(?<name>\\w+(?: \\w+)*)$";
         Matcher cardMatcher=getCommandMatcher(command,deployCard);
         Matcher spellMatcher=getCommandMatcher(command,deploySpell);
         if(cardMatcher.matches()){
             if(isHostPlaying){
                 if(getHostCardByName(cardMatcher.group("name"))==null){
                     System.out.println("you don't have this card! try again.");
-                    deploy(scanner, true);
+                    deploy(scanner, true, round);
                     return;
                 }
                 else if(getHostCardByName(cardMatcher.group("name")).getClass().equals(Spell.class)){
                     System.out.println("can't place this card! try again.");
-                    deploy(scanner, true);
+                    deploy(scanner, true, round);
                     return;
                 }
                 Damage_Heal card=(Damage_Heal) getHostCardByName(cardMatcher.group("name"));
                 if(card.getDuration()+Integer.parseInt(cardMatcher.group("number"))-1>20||checkDestroyedOrFull(card.getDuration(),Integer.parseInt(cardMatcher.group("number")),true)){
                     System.out.println("can't place this card! try again.");
-                    deploy(scanner, true);
+                    deploy(scanner, true, round);
                     return;
                 }
                 for(int i=0; i<card.getDuration(); i++)
                     hostTimeLine[i+Integer.parseInt(cardMatcher.group("number"))-1].setCard(card);
                 hostPlayer.removeCardFromDeck(card);
                 System.out.println("card placed successfully!");
-                for(int i=0; i<5; i++)
-                    if(hostCards[i].getName().equals(card.getName())) {
+                for(int i=0; i<6; i++)
+                    if(hostCards[i]!=null&&hostCards[i].getName().equals(card.getName())) {
                         this.hostCards[i]=hostPlayer.getDeck().get(random.nextInt(hostPlayer.getDeck().size()));
                         break;
                     }
@@ -224,26 +244,26 @@ public class Game {
             if(!isHostPlaying){
                 if(getGuestCardByName(cardMatcher.group("name"))==null){
                     System.out.println("you don't have this card! try again.");
-                    deploy(scanner, false);
+                    deploy(scanner, false, round);
                     return;
                 }
                 else if(getGuestCardByName(cardMatcher.group("name")).getClass().equals(Spell.class)){
                     System.out.println("can't place this card! try again.");
-                    deploy(scanner, false);
+                    deploy(scanner, false, round);
                     return;
                 }
                 Damage_Heal card=(Damage_Heal) getGuestCardByName(cardMatcher.group("name"));
                 if(card.getDuration()+Integer.parseInt(cardMatcher.group("number"))-1>20||checkDestroyedOrFull(card.getDuration(),Integer.parseInt(cardMatcher.group("number")),false)){
                     System.out.println("can't place this card! try again.");
-                    deploy(scanner, false);
+                    deploy(scanner, false, round);
                     return;
                 }
                 for(int i=0; i<card.getDuration(); i++)
                     guestTimeLine[i+Integer.parseInt(cardMatcher.group("number"))-1].setCard(card);
                 guestPlayer.removeCardFromDeck(card);
                 System.out.println("card placed successfully!");
-                for(int i=0; i<5; i++)
-                    if(guestCards[i].getName().equals(card.getName())) {
+                for(int i=0; i<6; i++)
+                    if(guestCards[i]!=null&&guestCards[i].getName().equals(card.getName())) {
                         this.guestCards[i]=guestPlayer.getDeck().get(random.nextInt(guestPlayer.getDeck().size()));
                         break;
                     }
@@ -253,20 +273,20 @@ public class Game {
             if(isHostPlaying){
                 if(getHostCardByName(spellMatcher.group("name"))==null){
                     System.out.println("you don't have this card! try again.");
-                    deploy(scanner, true);
+                    deploy(scanner, true, round);
                     return;
                 }
                 else if(getHostCardByName(spellMatcher.group("name")).getClass().equals(Damage_Heal.class)){
                     System.out.println("can't deploy this card! try again.");
-                    deploy(scanner, true);
+                    deploy(scanner, true, round);
                     return;
                 }
                 Spell card=(Spell) getHostCardByName(spellMatcher.group("name"));
-                card.Deploy();
+                card.Deploy(hostTimeLine,guestTimeLine,hostCards,guestCards,true,scanner,guestPlayer,hostPlayer,round);
                 hostPlayer.removeCardFromDeck(card);
                 System.out.println("card deployed successfully!");
-                for(int i=0; i<5; i++)
-                    if(hostCards[i].getName().equals(card.getName())) {
+                for(int i=0; i<6; i++)
+                    if(hostCards[i]!=null&&hostCards[i].getName().equals(card.getName())) {
                         this.hostCards[i]=hostPlayer.getDeck().get(random.nextInt(hostPlayer.getDeck().size()));
                         break;
                     }
@@ -274,20 +294,20 @@ public class Game {
             if(!isHostPlaying){
                 if(getGuestCardByName(spellMatcher.group("name"))==null){
                     System.out.println("you don't have this card! try again.");
-                    deploy(scanner, false);
+                    deploy(scanner, false, round);
                     return;
                 }
                 else if(getGuestCardByName(spellMatcher.group("name")).getClass().equals(Damage_Heal.class)){
                     System.out.println("can't deploy this card! try again.");
-                    deploy(scanner, false);
+                    deploy(scanner, false, round);
                     return;
                 }
                 Spell card=(Spell) getGuestCardByName(spellMatcher.group("name"));
-                card.Deploy();
+                card.Deploy(hostTimeLine,guestTimeLine,hostCards,guestCards,false,scanner,guestPlayer,hostPlayer,round);
                 guestPlayer.removeCardFromDeck(card);
                 System.out.println("card deployed successfully!");
-                for(int i=0; i<5; i++)
-                    if(guestCards[i].getName().equals(card.getName())) {
+                for(int i=0; i<6; i++)
+                    if(guestCards[i]!=null&&guestCards[i].getName().equals(card.getName())) {
                         this.guestCards[i]=guestPlayer.getDeck().get(random.nextInt(guestPlayer.getDeck().size()));
                         break;
                     }
@@ -295,7 +315,7 @@ public class Game {
         }
         else {
             System.out.println("invalid command! try again.");
-            deploy(scanner, isHostPlaying);
+            deploy(scanner, isHostPlaying, round);
         }
     }
     public void checkTimeLine(){
@@ -349,25 +369,27 @@ public class Game {
             if(hostPlayer.getHp()<=0){
                 System.out.println("Game has ended. Winner: "+guestPlayer.getUsername());
                 if(betMood) {
-                    System.out.println("Bet coin "+betCoin+" added to the guest's wallet!");
+                    System.out.println("Bet coin "+betCoin+" added to "+guestPlayer.getUsername()+"'s wallet!");
                     guestPlayer.addCoin(betCoin);
                 }
-                System.out.println(Math.abs(getGuestDamage()-getHostDamage())+" coins added to the guest's wallet!");
-                System.out.println(10*(Math.abs(getGuestDamage()-getHostDamage()))+" added to the guest's experience!");
+                System.out.println(Math.abs(getGuestDamage()-getHostDamage())+" coins added to "+guestPlayer.getUsername()+"'s wallet!");
+                System.out.println(10*(Math.abs(getGuestDamage()-getHostDamage()))+" added to "+guestPlayer.getUsername()+"'s experience!");
                 guestPlayer.addCoin(Math.abs(getGuestDamage()-getHostDamage()));
                 guestPlayer.addExp(10*(Math.abs(getGuestDamage()-getHostDamage())));
+                guestPlayer.updateLevel();
                 return;
             }
             else if(guestPlayer.getHp()<=0){
                 System.out.println("Game has ended. Winner: "+hostPlayer.getUsername());
                 if(betMood) {
-                    System.out.println("Bet coin "+betCoin+" added to the host's wallet!");
+                    System.out.println("Bet coin "+betCoin+" added to "+hostPlayer.getUsername()+"'s wallet!");
                     hostPlayer.addCoin(betCoin);
                 }
-                System.out.println(Math.abs(getGuestDamage()-getHostDamage())+" coins added to the host's wallet!");
-                System.out.println(10*(Math.abs(getGuestDamage()-getHostDamage()))+" added to the host's experience!");
-                guestPlayer.addCoin(Math.abs(getGuestDamage()-getHostDamage()));
-                guestPlayer.addExp(10*(Math.abs(getGuestDamage()-getHostDamage())));
+                System.out.println(Math.abs(getGuestDamage()-getHostDamage())+" coins added to "+hostPlayer.getUsername()+"'s wallet!");
+                System.out.println(10*(Math.abs(getGuestDamage()-getHostDamage()))+" added to "+hostPlayer.getUsername()+"'s experience!");
+                hostPlayer.addCoin(Math.abs(getGuestDamage()-getHostDamage()));
+                hostPlayer.addExp(10*(Math.abs(getGuestDamage()-getHostDamage())));
+                hostPlayer.updateLevel();
                 return;
             }
         }
@@ -388,8 +410,8 @@ public class Game {
     }
     public void showGameDetails(){
         //timeline
-        System.out.println("time line:");
-        System.out.print("host: ");
+        System.out.println("Time line:");
+        System.out.print("Host: ");
         for(int i=0; i<21; i++) {
             System.out.print("|");
             hostTimeLine[i].printBlock();
@@ -399,7 +421,7 @@ public class Game {
                 System.out.print("|");
         }
         System.out.println();
-        System.out.print("guest: ");
+        System.out.print("Guest: ");
         for(int i=0; i<21; i++) {
             System.out.print("|");
             guestTimeLine[i].printBlock();
@@ -411,43 +433,57 @@ public class Game {
         System.out.println();
         System.out.println("---------------------------------------------------------------------------------------------------------");
         //cards
-        System.out.println("available cards: ");
-        System.out.print("host: ");
-        for(int i=0; i<5; i++) {
-            System.out.print("|"+hostCards[i].getName());
-            if(i==4)
-                System.out.print("|");
+        System.out.println("Available cards: ");
+        System.out.print("Host: ");
+        for(int i=0; i<6; i++) {
+            if(hostCards[5]==null&&hostCards[i]!=null) {
+                System.out.print("|" + hostCards[i].getName());
+                if (i == 4)
+                    System.out.print("|");
+            }
+            else if(hostCards[i]!=null) {
+                System.out.print("|" + hostCards[i].getName());
+                if (i == 5)
+                    System.out.print("|");
+            }
         }
         System.out.println();
-        System.out.print("guest: ");
-        for(int i=0; i<5; i++) {
-            System.out.print("|"+guestCards[i].getName());
-            if(i==4)
-                System.out.print("|");
+        System.out.print("Guest: ");
+        for(int i=0; i<6; i++) {
+            if(guestCards[5]==null&&guestCards[i]!=null) {
+                System.out.print("|" + guestCards[i].getName());
+                if (i == 4)
+                    System.out.print("|");
+            }
+            else if(guestCards[i]!=null) {
+                System.out.print("|" + guestCards[i].getName());
+                if (i == 5)
+                    System.out.print("|");
+            }
         }
         System.out.println();
         System.out.println("---------------------------------------------------------------------------------------------------------");
-        System.out.println("players' damage: ");
+        System.out.println("Players' damage: ");
         getPlayersDamage();
         System.out.println("---------------------------------------------------------------------------------------------------------");
-        System.out.println("players' hp: ");
+        System.out.println("Players' hp: ");
         System.out.println("Host: "+hostPlayer.getHp());
         System.out.println("Guest: "+guestPlayer.getHp());
         System.out.println("---------------------------------------------------------------------------------------------------------");
-        System.out.println("players' character: ");
+        System.out.println("Players' character: ");
         System.out.println("Host: "+hostPlayer.getCharacter());
         System.out.println("Guest: "+guestPlayer.getCharacter());
     }
     public Card getGuestCardByName(String name){
-        for(int i=0; i<5; i++){
-            if(guestCards[i].getName().equals(name))
+        for(int i=0; i<6; i++){
+            if(guestCards[i]!=null&&guestCards[i].getName().equals(name))
                 return guestCards[i];
         }
         return null;
     }
     public Card getHostCardByName(String name){
-        for(int i=0; i<5; i++){
-            if(hostCards[i].getName().equals(name))
+        for(int i=0; i<6; i++){
+            if(hostCards[i]!=null&&hostCards[i].getName().equals(name))
                 return hostCards[i];
         }
         return null;
