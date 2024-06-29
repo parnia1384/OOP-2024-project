@@ -18,7 +18,7 @@ class Spell extends Card{
     Random random=new Random();
     public Spell(String name, int price){super(name);
         this.price=price;}
-    //look at me. I'm new love!
+    //look at me. I'm new love! //hello love:)
     public Spell(String name){
         this.name = name;
     }
