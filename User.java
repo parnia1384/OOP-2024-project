@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -26,7 +25,9 @@ public class User {
         this.nickname = nickname;
         this.hp = 100;
         this.level = 1;
+        this.coin = 300;
     }
+    //blank structure is new here:
     User(){
         this.username = " ";
     }
@@ -52,21 +53,24 @@ public class User {
         ArrayList<Spell> tempSpells = new ArrayList<>(spells);
         for (int i = 0; i < 5; i++) {
             int randomIndex = random.nextInt(tempSpells.size());
-            Spell card = tempSpells.get(randomIndex);
+            Spell card = tempSpells.get(Math.abs(randomIndex));
             spellDeck.add(card);
-            tempSpells.remove(randomIndex);
+            tempSpells.remove(Math.abs(randomIndex));
         }
         for (int i = 0; i < 15; i++) {
             int randomIndex = random.nextInt(tempCards.size());
-            Damage_Heal card = tempCards.get(randomIndex);
+            Damage_Heal card = tempCards.get(Math.abs(randomIndex));
             cardDeck.add(card);
-            tempCards.remove(randomIndex);
+            tempCards.remove(Math.abs(randomIndex));
         }
     }
     public void setCharacter(String character){this.character=character;}
-    public void addToDeck(Damage_Heal card){cardDeck.add(card);}
-    public void addToDeck(Spell card){spellDeck.add(card);}
-
+    public void addToDeck(Damage_Heal card){
+        cardDeck.add(card);
+    }
+    public void addToDeck(Spell card){
+        spellDeck.add(card);
+    }
     public Damage_Heal getCardFromDeckByName(String name){
         for(Damage_Heal card: cardDeck)
             if(card.getName().equals(name))
@@ -81,10 +85,14 @@ public class User {
     }
     public void showDeck(){
         int num = 0;
-        for(Damage_Heal card: cardDeck)
-            System.out.println(++num+". name: "+card.getName()+" defence_attack: "+card.getDefence_attack()+" duration: "+card.getDuration()+" damage: "+card.getDamage()+" upgradeLeve: "+card.getUpgradeLevel()+" upgradeCost: "+card.getUpgradeCost());
-        for(Spell card: spellDeck)
-            System.out.println(++num+". name: "+card.getName());
+        if(cardDeck.isEmpty() && spellDeck.isEmpty())
+            System.out.println("Your deck is empty.");
+        else{
+            for(Damage_Heal card: cardDeck)
+                System.out.println(++num+". name: "+card.getName()+" defence_attack: "+card.getDefence_attack()+" duration: "+card.getDuration()+" damage: "+card.getDamage()+" upgradeLeve: "+card.getUpgradeLevel()+" upgradeCost: "+card.getUpgradeCost());
+            for(Spell card: spellDeck)
+                System.out.println(++num+". name: "+card.getName());
+        }
     }
     public void upgradeCard(String name){
         if(getCardFromDeckByName(name)!=null) {
@@ -93,7 +101,6 @@ public class User {
             else
                 getCardFromDeckByName(name).upgrade();
         }
-
     }
     public int getLevel(){
         return this.level;
@@ -163,9 +170,17 @@ public class User {
     public void setAnswer(String answer){
         this.answer = answer;
     }
+    //check me out!!
     @Override
     public String toString(){
         String userInformation = "new user:\n" + username + " " + password + " " + email + " " + nickname + " " + numberOfQuestion + " " + answer + " " + coin + " " + exp + " " + hp + '\n';
+        userInformation += "user damage_heal cards:\n";
+        for(Damage_Heal card : cardDeck)
+            userInformation += (card.toString() + '\n');
+        userInformation += "Done!\nSpell cards:\n";
+        for(Spell card : spellDeck)
+            userInformation += (card.getName() + '\n');
+        userInformation += "Done!\n";
         return userInformation;
     }
 }
