@@ -3,7 +3,6 @@ import java.util.Collections;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 public class MainMenu {
     private ArrayList<Damage_Heal> shopCards = new ArrayList<>();
     private ArrayList<Spell> shopSpells = new ArrayList<>();
@@ -62,13 +61,14 @@ public class MainMenu {
             String input = scanner.nextLine();
             if (input.equals("start game")) {
                 Game game=new Game(user,scanner,registryMenu,outputs);
-                game.run(shopCards,shopSpells, scanner);
+                game.run(shopCards,shopSpells, scanner, registryMenu);
             }
             else if (input.equals("show deck")) {
                 user.showDeck();
             }
             else if (input.equals("show history")) {
-
+                for(String games : registryMenu.getGamesHistory())
+                    System.out.println(games);
             }
             else if (input.equals("shop menu")) {
                 System.out.println("entered shop menu");
