@@ -47,12 +47,20 @@ public class CaptchaGenerator {
         for(int y = 0; y < height; y++){
             StringBuilder stringBuilder = new StringBuilder();
             for(int x = 0; x < width; x++){
-                stringBuilder.append(image.getRGB(x, y) == -16777216 ? " " : "*");
+                stringBuilder.append(image.getRGB(x, y) == -16777216 ? " " : randomChar());
             }
             if(stringBuilder.toString().trim().isEmpty())
                 continue;
             System.out.println(stringBuilder);
         }
+    }
+    private char randomChar(){
+        String upperCase = "QWERTYUIOPASDFGHJKLZXCVBNM";
+        String lowerCase = "qwertyuiopasdfghjklzxcvbnm";
+        String allChars = upperCase + lowerCase + "0123456789";
+        Random random = new Random();
+        int i = random.nextInt(62);
+        return allChars.charAt(i);
     }
     public void asciiArtCaptcha(Scanner scanner){
         String captcha = generateRandomStringForCaptcha();
