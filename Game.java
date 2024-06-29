@@ -380,7 +380,9 @@ public class Game {
                 guestPlayer.addCoin(Math.abs(getGuestDamage()-getHostDamage()));
                 guestPlayer.addExp(10*(Math.abs(getGuestDamage()-getHostDamage())));
                 guestPlayer.updateLevel();
-                String gameForMainMenuHistory = hostPlayer.getUsername() + " vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " winner: " + hostPlayer.getUsername();
+                guestPlayer.reduceHP(-50);
+                hostPlayer.resetHP();
+                String gameForMainMenuHistory = hostPlayer.getUsername() + " vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " winner: " + guestPlayer.getUsername();
                 String forWinner = "vs " + hostPlayer.getUsername() + " " + getDateAndTime() + " status: you won!";
                 String forLoser = "vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " status: you lose!";
                 hostPlayer.addGame(forLoser);
@@ -399,7 +401,9 @@ public class Game {
                 hostPlayer.addCoin(Math.abs(getGuestDamage()-getHostDamage()));
                 hostPlayer.addExp(10*(Math.abs(getGuestDamage()-getHostDamage())));
                 hostPlayer.updateLevel();
-                String gameForMainMenuHistory = hostPlayer.getUsername() + " vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " winner: " + guestPlayer.getUsername();
+                hostPlayer.reduceHP(-50);
+                guestPlayer.resetHP();
+                String gameForMainMenuHistory = hostPlayer.getUsername() + " vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " winner: " + hostPlayer.getUsername();
                 String forLoser = "vs " + hostPlayer.getUsername() + " " + getDateAndTime() + " status: you lose!";
                 String forWinner = "vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " status: you won!";
                 hostPlayer.addGame(forWinner);
