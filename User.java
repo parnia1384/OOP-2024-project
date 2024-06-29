@@ -27,6 +27,9 @@ public class User {
         this.hp = 100;
         this.level = 1;
     }
+    User(){
+        this.username = " ";
+    }
     public ArrayList<Damage_Heal> getCardDeck(){return cardDeck;}
     public ArrayList<Spell> getSpellDeck(){return spellDeck;}
     public ArrayList<Card> getDeck(){
