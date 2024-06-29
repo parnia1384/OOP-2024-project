@@ -343,7 +343,10 @@ public class Game {
         for(int i=0; i<21; i++)
             if (hostTimeLine[i].getCard() != null && !hostTimeLine[i].hasFailed() && !hostTimeLine[i].isDestroyed()) {
                 Damage_Heal hostCard = (Damage_Heal) hostTimeLine[i].getCard();
-                hostDamage += hostCard.getDamage() / hostCard.getDuration();
+                if(hostPlayer.isCardCharacter(hostTimeLine[i].getCard()))
+                    hostDamage += (hostCard.getDamage() / hostCard.getDuration()+5);
+                else
+                    hostDamage += hostCard.getDamage() / hostCard.getDuration();
             }
         return hostDamage;
     }
@@ -352,7 +355,10 @@ public class Game {
         for(int i=0; i<21; i++)
             if (guestTimeLine[i].getCard() != null && !guestTimeLine[i].hasFailed() && !guestTimeLine[i].isDestroyed()) {
                 Damage_Heal guestCard = (Damage_Heal) guestTimeLine[i].getCard();
-                guestDamage+=guestCard.getDamage() / guestCard.getDuration();
+                if(guestPlayer.isCardCharacter(guestTimeLine[i].getCard()))
+                    guestDamage+=(guestCard.getDamage() / guestCard.getDuration()+5);
+                else
+                    guestDamage+=guestCard.getDamage() / guestCard.getDuration();
             }
         return guestDamage;
     }
