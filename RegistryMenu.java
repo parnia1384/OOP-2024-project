@@ -47,6 +47,43 @@ public class RegistryMenu {
             }
         }
     }
+    public void signupWithRandomPassword(Matcher matcher, Scanner scanner){
+        if(!matcher.matches()) System.out.println("invalid input!");
+        else{
+            String username = matcher.group(1);
+            String email = matcher.group(2);
+            String nickname = matcher.group(3);
+            if(!isUsernameCorrect(username) || !isUsernameCorrect(nickname)) System.out.println(output.wrongUsernameFormat);
+            else if(!isUsernameNew(username)) System.out.println(output.duplicateUsername);
+            else if(!isEmailCorrect(email)) System.out.println(output.wrongEmailFormat);
+            else{
+                CaptchaGenerator passwordGenerator = new CaptchaGenerator();
+                String password = passwordGenerator.generateRandomStringForPassword();
+                System.out.println(password);
+                System.out.println("Enter password confirmation:");
+                String confirmation = scanner.nextLine();
+                while(!confirmation.equals(password)){
+                    System.out.println("Password confirmation is not true. Please try again:");
+                    confirmation = scanner.nextLine();
+                }
+                User newUser = new User(username, password, email, nickname);
+                signedUpUser = newUser;
+                users.add(newUser);
+                System.out.println(output.successfullyAccount);
+                String chooseSecurityQuestion = "question pick -q (\\S+) -a (\\S+) -c (\\S+)";
+                String command;
+                while(true){
+                    command = scanner.nextLine();
+                    if(command.matches(chooseSecurityQuestion)){
+                        matcher = getCommandMatcher(command, chooseSecurityQuestion);
+                        chooseSecurityQuestion(matcher, scanner);
+                        break;
+                    }
+                    else System.out.println("You have to choose your security question first!");
+                }
+            }
+        }
+    }
     public void chooseSecurityQuestion(Matcher matcher, Scanner scanner){
         if(!matcher.matches() || signedUpUser == null) System.out.println("invalid input!");
         else{
