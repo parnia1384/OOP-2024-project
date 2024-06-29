@@ -12,7 +12,7 @@ public class GameController {
         mainMenu.addSpell();
         Scanner scan = new Scanner(System.in);
         String signup = "user create -u (\\S+) -p (\\S+) (\\S+) -email (\\S+) -n (\\S+)";
-        String signupWithRandomPassword = "user create -u (\\S+) -p (\\S+) (\\S+) -email (\\S+) -n (\\S+)";
+        String signupWithRandomPassword = "user create -u (\\S+) -p random -email (\\S+) -n (\\S+)";
         String login = "user login -u (\\S+) -p (\\S+)";
         String logout = "log out";
         String forgotPassword = "Forgot my password -u (\\S+)";
@@ -23,18 +23,19 @@ public class GameController {
             if(command.equals("Exit")) break;
             else if(command.matches(signup)){
                 matcher = getCommandMatcher(command, signup);
-                registryMenu.signup(matcher, scan);
+                if(loggedInUser != null) System.out.println("invalid command.");
+                else registryMenu.signup(matcher, scan);
             }
             else if (command.matches("main menu")){
                 if(loggedInUser == null) System.out.println("Please login first");
                 else{
                     System.out.println("entered main menu");
-                    mainMenu.run(scan,loggedInUser,registryMenu,output);
+                    mainMenu.run(scan, loggedInUser, registryMenu, output);
                 }
             }
             else if(command.matches(login)){
                 matcher = getCommandMatcher(command, login);
-                login(matcher);
+                login(matcher, scan);
             }
             else if(command.matches(logout)){
                 loggedInUser = null;
@@ -48,6 +49,10 @@ public class GameController {
                 matcher=getCommandMatcher(command, admin);
                 admin(matcher, scan);
             }
+            else if(command.matches(signupWithRandomPassword)){
+                matcher = getCommandMatcher(command, signupWithRandomPassword);
+                registryMenu.signupWithRandomPassword(matcher, scan);
+            }
             else if(command.equals("Show players")) showPlayers();
             else if(command.equals("command prompt")) Manuals();
             else System.out.println("invalid input!");
@@ -59,10 +64,11 @@ public class GameController {
     }
     public void getInformationFromFile(){
         try{
-            File myFile = new File("C:\\Users\\ASUS\\Desktop\\OOP\\Phase1\\file.txt");
+            File myFile = new File("C:\\Users\\ASUS\\Desktop\\University\\Term2\\OOP\\proj_group7\\src\\User Information.txt");
             Scanner scan = new Scanner(myFile);
             ArrayList<User> users = new ArrayList<>();
             String[] parts;
+            User myUser = new User();
             while(scan.hasNextLine()){
                 String line = scan.nextLine();
                 if(line.equals("new user:")){
@@ -75,6 +81,35 @@ public class GameController {
                     user.setExp(Integer.parseInt(parts[7]));
                     user.setHp(Integer.parseInt(parts[8]));
                     users.add(user);
+                    myUser = user;
+                }
+                else if(line.equals("user damage_heal cards:")){
+                    String cardInformation;
+                    while(true){
+                        cardInformation = scan.nextLine();
+                        if(cardInformation.equals("Done!")) break;
+                        else{
+                            parts = cardInformation.split(" ");
+                            String name = parts[0];
+                            int defenceAttack = Integer.parseInt(parts[1]);
+                            int duration = Integer.parseInt(parts[2]);
+                            int damage = Integer.parseInt(parts[3]);
+                            int upgradeLevel = Integer.parseInt(parts[4]);
+                            Damage_Heal card = new Damage_Heal(name, defenceAttack, duration, damage, upgradeLevel);
+                            myUser.addToDeck(card);
+                        }
+                    }
+                }
+                else if(line.equals("Spell cards:")){
+                    String cardNames;
+                    while(true){
+                        cardNames = scan.nextLine();
+                        if(cardNames.equals("Done!")) break;
+                        else{
+                            Spell spell = new Spell(cardNames);
+                            myUser.addToDeck(spell);
+                        }
+                    }
                 }
             }
             scan.close();
@@ -87,7 +122,7 @@ public class GameController {
     public void writeInformationInFile(){
         ArrayList<User> users = registryMenu.getUsers();
         try{
-            File myFile = new File("C:\\Users\\ASUS\\Desktop\\OOP\\Phase1\\file.txt");
+            File myFile = new File("C:\\Users\\ASUS\\Desktop\\University\\Term2\\OOP\\proj_group7\\src\\User Information.txt");
             FileWriter writer = new FileWriter(myFile);
             for(User user : users){
                 String str = user.toString();
@@ -99,17 +134,36 @@ public class GameController {
             System.out.println(e);
         }
     }
-    private void login(Matcher matcher){
+    private void login(Matcher matcher, Scanner scanner){
         if(!matcher.matches() || loggedInUser != null) System.out.println("invalid input!");
         else{
             String username = matcher.group(1);
             String password = matcher.group(2);
             User user = registryMenu.findUserByUsername(username);
             if(user == null) System.out.println(output.usernameDoesNotExist);
-            else if(!user.getPassword().equals(password)) System.out.println(output.wrongPasswordEntered);
             else{
-                loggedInUser = user;
-                System.out.println(output.loggedInSuccessfully);
+                int counter = 0;
+                while(true){
+                    if(password.equals(user.getPassword())){
+                        loggedInUser = user;
+                        System.out.println(output.loggedInSuccessfully);
+                        break;
+                    }
+                    else{
+                        counter++;
+                        int delay = counter * 5;
+                        long startTime = System.currentTimeMillis();
+                        System.out.println("Invalid password\nPlease try again in " + delay + " seconds");
+                        while(true){
+                            System.out.println("Password:");
+                            password = scanner.nextLine();
+                            long elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
+                            long remainingTime = delay - elapsedTime;
+                            if(remainingTime > 0) System.out.println("Please try again in: " + remainingTime + " seconds");
+                            else break;
+                        }
+                    }
+                }
             }
         }
     }
@@ -122,13 +176,14 @@ public class GameController {
         String addCardByAdmin = "add card <name> <defenceAttack> <duration> <damage> <upgradeLevel> <upgradeCost> <price>";
         String editCard = "edit card <name> <defenceAttack> <duration> <damage> <upgradeLevel> <upgradeCost> <price>";
         String deleteCard = "delete card <number>";
-        System.out.println("To signup: " + signUp + "\nTo select recovery question after registration: " + chooseQuestion + "\nTo change password: " + changePassword
-                + "\nTo login: " + login + "\nTo see users: Show players\nTo enter main menu: main menu\n_______________\nIf you are an admin:"
-                + admin + "\nTo add card: " + addCardByAdmin + "\nTo edit card: " + editCard + "\nTo delete a card: " + deleteCard + "\nTo logout: back"
-                + "\nTo see cards write: show cards\n_______________\nIf you are in the main menu:\nTo enter the shop: shop menu\nTo enter the profile menu: Profile menu\n"
-                + "_______________\nIf you are in profile menu:\nTo see your Information: Show profile\nTo change your password: Profile change -o <oldPass> -n <newPass>\nTo change your username: " +
-                "Profile change -u <newUsername>\nTo change your nickname: Profile change -n <newNickname>\nTo change your email: Profile change -e <newEmail>\nTo return to the main menu: Exit profile menu"
-                + "\n_______________\nIf you are in the shop:\nTo buy a new card: buy card <name>\nTo upgrade a card: upgrade card <name>\nTo return to the main menu: back\n_______________\n");
+        System.out.println("To signup: " + signUp + "\nTo signup with a random password: user create -u <username> -p random -email <yourEmail> -n <nickname>\nTo select recovery question after registration: " +
+        chooseQuestion + "\nTo change password: " + changePassword + "\nTo login: " + login + "\nTo see users: Show players\nTo enter main menu: main menu\n_______________\nIf you are an admin:"
+        + admin + "\nTo add card: " + addCardByAdmin + "\nTo edit card: " + editCard + "\nTo delete a card: " + deleteCard + "\nTo logout: back"
+        + "\nTo see cards write: show cards\n_______________\nIf you are in the main menu:\nTo enter the shop: shop menu\nTo enter the profile menu: Profile menu\nTo start a game: start game\nTo see your deck: Show deck\n"
+        + "_______________\nIf you are in profile menu:\nTo see your Information: Show profile\nTo change your password: Profile change -o <oldPass> -n <newPass>\nTo change your username: " +
+        "Profile change -u <newUsername>\nTo change your nickname: Profile change -n <newNickname>\nTo change your email: Profile change -e <newEmail>\nTo return to the main menu: Exit profile menu"
+        + "\n_______________\nIf you are in the shop:\nTo buy a new card: buy card <name>\nTo upgrade a card: upgrade card <name>\nTo return to the main menu: back\n_______________\nIf you start a game:\nfor the 2nd user: user login -u <username> -p <password>"
+        +"\nTo place a card: place card <name> in block <number>\nTo deploy a card: deploy card <name>\n_______________\n");
     }
     private void showPlayers(){
         ArrayList<User> users = registryMenu.getUsers();
@@ -205,7 +260,7 @@ public class GameController {
                                 if(answer.equalsIgnoreCase("y"))
                                 {
                                     System.out.println("card deleted successfully");
-                                    mainMenu.getShopCards().remove(mainMenu.getShopCards().get(Integer.parseInt(delete.group("number"))-1));
+                                    mainMenu.getShopCards().remove(mainMenu.getShopCards().get(Integer.parseInt(delete.group("number"))));
                                 }
                             }
                         }
