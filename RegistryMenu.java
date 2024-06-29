@@ -8,6 +8,7 @@ public class RegistryMenu {
     private ArrayList<User> users = new ArrayList<>();
     private User signedUpUser = null;
     final protected Outputs output = new Outputs();
+    private ArrayList<String> gamesHistory = new ArrayList<>();
     public void signup(Matcher matcher, Scanner scanner){
         if(!matcher.matches()) System.out.println("invalid input!");
         else{
@@ -142,6 +143,12 @@ public class RegistryMenu {
             if(user.getUsername().equals(username))
                 return user;
         return null;
+    }
+    public void addGame(String game){
+        gamesHistory.add(game);
+    }
+    public ArrayList<String> getGamesHistory(){
+        return gamesHistory;
     }
     protected Matcher getCommandMatcher(String input, String regex){
         Pattern pattern=Pattern.compile(regex);
