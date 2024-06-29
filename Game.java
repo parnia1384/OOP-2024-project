@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-
 public class Game {
     private User hostPlayer, guestPlayer;
     private boolean doubleMood=false, betMood=false;
@@ -16,7 +15,7 @@ public class Game {
     private Card[] guestCards=new Card[6];
     private int betCoin;
     Random random=new Random();
-    private String time, date;
+    final private String time, date;
     private int round;
 
     public Game(User hostPlayer, Scanner scanner, RegistryMenu registryMenu, Outputs outputs){
@@ -165,45 +164,43 @@ public class Game {
             }
         }
     }
-    public void run(ArrayList<Damage_Heal> cards, ArrayList<Spell> spells, Scanner scanner){
-           if(hostPlayer.getCardDeck().isEmpty()&&hostPlayer.getSpellDeck().isEmpty()) {
-               hostPlayer.getRandDeck(cards, spells);
-               System.out.println("Starterpack for the host:");
-               hostPlayer.showDeck();
-           }
-           if(guestPlayer.getCardDeck().isEmpty()&&guestPlayer.getSpellDeck().isEmpty()) {
-               guestPlayer.getRandDeck(cards, spells);
-               System.out.println("Starterpack for the guest:");
-               guestPlayer.showDeck();
-           }
-           for(int i=0; i<21; i++){
-               if(i<5){
-                   this.hostCards[i]=hostPlayer.getDeck().get(random.nextInt(hostPlayer.getDeck().size()));
-                   this.guestCards[i]=guestPlayer.getDeck().get(random.nextInt(guestPlayer.getDeck().size()));
-               }
-               this.guestTimeLine[i]=new Block();
-               this.hostTimeLine[i]=new Block();
-           }
-           hostCards[5]=null;
-           guestCards[5]=null;
-           hostTimeLine[random.nextInt(21)].setDestroyed();
-           guestTimeLine[random.nextInt(21)].setDestroyed();
-           round=0;
-           while(true){
-               System.out.println("Round "+(++round)+":");
-               showGameDetails();
-               System.out.println("Guest: ");
-               //place card <name> in block <number>
-               //deploy card <name>
-               deploy(scanner,false, round);
-               System.out.println("Host: ");
-               deploy(scanner,true, round);
-               checkTimeLine();
-               System.out.println("Round "+(round)+" is over");
-               if(round==4)
-                   break;
-           }
-           checkWinner(cards,spells,scanner);
+    public void run(ArrayList<Damage_Heal> cards, ArrayList<Spell> spells, Scanner scanner, RegistryMenu registryMenu){
+        if(hostPlayer.getCardDeck().isEmpty()&&hostPlayer.getSpellDeck().isEmpty()) {
+            hostPlayer.getRandDeck(cards, spells);
+            System.out.println("Starterpack for the host:");
+            hostPlayer.showDeck();
+        }
+        if(guestPlayer.getCardDeck().isEmpty()&&guestPlayer.getSpellDeck().isEmpty()) {
+            guestPlayer.getRandDeck(cards, spells);
+            System.out.println("Starterpack for the guest:");
+            guestPlayer.showDeck();
+        }
+        for(int i=0; i<21; i++){
+            if(i<5){
+                this.hostCards[i]=hostPlayer.getDeck().get(random.nextInt(hostPlayer.getDeck().size()));
+                this.guestCards[i]=guestPlayer.getDeck().get(random.nextInt(guestPlayer.getDeck().size()));
+            }
+            this.guestTimeLine[i]=new Block();
+            this.hostTimeLine[i]=new Block();
+        }
+        hostCards[5]=null;
+        guestCards[5]=null;
+        hostTimeLine[random.nextInt(21)].setDestroyed();
+        guestTimeLine[random.nextInt(21)].setDestroyed();
+        round=0;
+        while(true){
+            System.out.println("Round "+(++round)+":");
+            showGameDetails();
+            System.out.println("Guest: ");
+            deploy(scanner,false, round);
+            System.out.println("Host: ");
+            deploy(scanner,true, round);
+            checkTimeLine();
+            System.out.println("Round "+(round)+" is over");
+            if(round==4)
+                break;
+        }
+        checkWinner(cards,spells,scanner, registryMenu);
     }
     public void deploy(Scanner scanner, Boolean isHostPlaying, int round){
         String command=scanner.nextLine();
@@ -362,7 +359,7 @@ public class Game {
             }
         return guestDamage;
     }
-    public void checkWinner(ArrayList<Damage_Heal> cards, ArrayList<Spell> spells, Scanner scanner){
+    public void checkWinner(ArrayList<Damage_Heal> cards, ArrayList<Spell> spells, Scanner scanner, RegistryMenu registryMenu){
         for(int i=0; i<21; i++){
             if(hostTimeLine[i].getCard()!=null&&!hostTimeLine[i].hasFailed()&&!hostTimeLine[i].isDestroyed()) {
                 Damage_Heal hostCard=(Damage_Heal) hostTimeLine[i].getCard();
@@ -383,6 +380,12 @@ public class Game {
                 guestPlayer.addCoin(Math.abs(getGuestDamage()-getHostDamage()));
                 guestPlayer.addExp(10*(Math.abs(getGuestDamage()-getHostDamage())));
                 guestPlayer.updateLevel();
+                String gameForMainMenuHistory = hostPlayer.getUsername() + " vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " winner: " + hostPlayer.getUsername();
+                String forWinner = "vs " + hostPlayer.getUsername() + " " + getDateAndTime() + " status: you won!";
+                String forLoser = "vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " status: you lose!";
+                hostPlayer.addGame(forLoser);
+                guestPlayer.addGame(forWinner);
+                registryMenu.addGame(gameForMainMenuHistory);
                 return;
             }
             else if(guestPlayer.getHp()<=0){
@@ -396,11 +399,17 @@ public class Game {
                 hostPlayer.addCoin(Math.abs(getGuestDamage()-getHostDamage()));
                 hostPlayer.addExp(10*(Math.abs(getGuestDamage()-getHostDamage())));
                 hostPlayer.updateLevel();
+                String gameForMainMenuHistory = hostPlayer.getUsername() + " vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " winner: " + guestPlayer.getUsername();
+                String forLoser = "vs " + hostPlayer.getUsername() + " " + getDateAndTime() + " status: you lose!";
+                String forWinner = "vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " status: you won!";
+                hostPlayer.addGame(forWinner);
+                guestPlayer.addGame(forLoser);
+                registryMenu.addGame(gameForMainMenuHistory);
                 return;
             }
         }
         System.out.println("No winner, next round begins!");
-        run(cards,spells,scanner);
+        run(cards,spells,scanner, registryMenu);
     }
     public boolean checkDestroyedOrFull(int duration, int block, boolean isHostPlaying){
         if(isHostPlaying){
