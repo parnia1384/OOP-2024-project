@@ -35,7 +35,15 @@ public class User {
         deck.addAll(cardDeck);
         return deck;
     }
-
+    public String getCharacter(){return character;}
+    public void addCoin(int amount){this.coin+=amount;}
+    public void addExp(int amount){this.exp+=amount;}
+    public void removeCardFromDeck(Card card){
+        if(card.getClass().equals(Damage_Heal.class))
+            cardDeck.remove(card);
+        else if(card.getClass().equals(Spell.class))
+            spellDeck.remove(card);
+    }
     public void getRandDeck(ArrayList<Damage_Heal> cards, ArrayList<Spell> spells) {
         ArrayList<Damage_Heal> tempCards = new ArrayList<>(cards);
         ArrayList<Spell> tempSpells = new ArrayList<>(spells);
@@ -139,6 +147,7 @@ public class User {
     public void setHp(int hp){
         this.hp = hp;
     }
+    public void reduceHP(int amount){this.hp-=amount;}
     public int getHp(){
         return hp;
     }
