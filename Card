@@ -99,7 +99,7 @@ class Spell extends Card{
                 String answer;
                 while (true){
                     answer=scanner.nextLine();
-                    if(guestCards[Integer.parseInt(answer)-1]!=null||(answer.equals("1")||answer.equals("2")||answer.equals("3")||answer.equals("4")||answer.equals("5")))
+                    if(guestCards[Integer.parseInt(answer)-1]!=null||(answer.equals("1")||answer.equals("2")||answer.equals("3")||answer.equals("4")||answer.equals("5")||answer.equals("6")))
                         break;
                     System.out.println("invalid number! try again.");
                 }
@@ -110,7 +110,7 @@ class Spell extends Card{
                 String answer;
                 while (true){
                     answer=scanner.nextLine();
-                    if(hostCards[Integer.parseInt(answer)-1]!=null||(answer.equals("1")||answer.equals("2")||answer.equals("3")||answer.equals("4")||answer.equals("5")))
+                    if(hostCards[Integer.parseInt(answer)-1]!=null||(answer.equals("1")||answer.equals("2")||answer.equals("3")||answer.equals("4")||answer.equals("5")||answer.equals("6")))
                         break;
                     System.out.println("invalid number! try again.");
                 }
