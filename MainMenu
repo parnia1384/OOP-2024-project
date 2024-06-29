@@ -60,9 +60,7 @@ public class MainMenu {
     public void run(Scanner scanner, User user, RegistryMenu registryMenu, Outputs outputs) {
         while(true){
             String input = scanner.nextLine();
-            if (input.equals("back"))
-                break;
-            else if (input.equals("start game")) {
+            if (input.equals("start game")) {
                 Game game=new Game(user,scanner,registryMenu,outputs);
                 game.run(shopCards,shopSpells, scanner);
             }
@@ -77,30 +75,42 @@ public class MainMenu {
                 showCardsNotInDeck(user);
                 while (true) {
                     String command = scanner.nextLine();
-                    if (command.equals("back")) break;
-                    String buyCard = "^buy\\s+card\\s+(?<name>\\w+)$";
-                    String upgradeCard = "^upgrade\\s+card\\s+(?<name>\\w+)$";
+                    if (command.equals("back")){
+                        System.out.println("Returned to main menu");
+                        break;
+                    }
+                    String buyCard = "^buy card ([A-Z ]+)$";
+                    String upgradeCard = "^upgrade card ([A-Z ]+)$";
                     Matcher buy = getCommandMatcher(command, buyCard);
                     Matcher upgrade = getCommandMatcher(command, upgradeCard);
                     if (!buy.matches() && !upgrade.matches()) System.out.println("invalid command!");
                     else if (buy.matches()) {
-                        String name = buy.group("name");
+                        String name = buy.group(1);
                         if (getCardByName(name) != null) {
                             if (user.getCoin() < getCardByName(name).getPrice())
                                 System.out.println("not enough money!");
-                            else
+                            else{
                                 user.addToDeck(getCardByName(name));
+                                int coin = user.getCoin();
+                                coin -= getCardByName(name).getPrice();
+                                user.setCoin(coin);
+                                System.out.println("The card has been added to your table.");
+                            }
                         }
                         else if (getSpellByName(name) != null) {
                             if (user.getCoin() < getSpellByName(name).getPrice())
                                 System.out.println("not enough money!");
-                            else
+                            else{
                                 user.addToDeck(getSpellByName(name));
+                                int coin = user.getCoin();
+                                coin -= getSpellByName(name).getPrice();
+                                user.setCoin(coin);
+                            }
                         }
                         else System.out.println("card doens't exist!");
                     }
                     else if (upgrade.matches()) {
-                        String name = upgrade.group("name");
+                        String name = upgrade.group(1);
                         user.upgradeCard(name);
                     }
                 }
