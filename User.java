@@ -185,6 +185,7 @@ public class User {
     public int getHp(){
         return hp;
     }
+    public void resetHP(){this.hp=100;}
     public void setExp(int newExp){
         this.exp = newExp;
     }
