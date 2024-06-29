@@ -1,21 +1,27 @@
 import java.util.PrimitiveIterator;
-
 abstract class Card {
-    private String name;
+    protected String name;
     public Card(String name){this.name=name;}
+    //new down here:
+    public Card(){
+        this.name = "";
+    }
     public String getName(){return name;}
 }
 class Spell extends Card{
     private int price;
     public Spell(String name, int price){super(name);
-    this.price=price;}
+        this.price=price;}
+    //look at me. I'm new love!
+    public Spell(String name){
+        this.name = name;
+    }
     public void Deploy(){}
     public int getPrice(){return price;}
 }
 class Damage_Heal extends Card{
     private int defence_attack, duration, damage, upgradeLevel, upgradeCost, price;
-    public Damage_Heal(String name, int defence_attack, int duration, int damage, int upgradeLevel, int upgradeCost,int price)
-    {
+    public Damage_Heal(String name, int defence_attack, int duration, int damage, int upgradeLevel, int upgradeCost,int price) {
         super(name);
         this.defence_attack=defence_attack;
         this.damage=damage;
@@ -24,6 +30,21 @@ class Damage_Heal extends Card{
         this.upgradeLevel=upgradeLevel;
         this.price=price;
     }
+    //Hello I'm new here: :)
+    public Damage_Heal(String name, int defence_attack, int duration, int damage, int upgradeLevel) {
+        super(name);
+        this.defence_attack=defence_attack;
+        this.damage=damage;
+        this.duration=duration;
+        this.upgradeLevel=upgradeLevel;
+    }
+    //and here:
+    @Override
+    public String toString() {
+        String str = this.getName() + " " + defence_attack + " " + duration + " " + damage + " " + upgradeLevel;
+        return str;
+    }
+
     public int getDamage(){return damage;}
     public int getDefence_attack(){return defence_attack;}
     public int getDuration(){return duration;}
@@ -31,15 +52,15 @@ class Damage_Heal extends Card{
     public int getUpgradeCost(){return upgradeCost;}
     public int getPrice(){return price;}
     public void edit(int defence_attack, int duration, int damage, int upgradeLevel, int upgradeCost, int price){
-        this.defence_attack=defence_attack;
-        this.damage=damage;
-        this.duration=duration;
-        this.upgradeCost=upgradeCost;
-        this.upgradeLevel=upgradeLevel;
-        this.price=price;
+        this.defence_attack = defence_attack;
+        this.damage = damage;
+        this.duration = duration;
+        this.upgradeCost = upgradeCost;
+        this.upgradeLevel = upgradeLevel;
+        this.price = price;
     }
     public void upgrade(){
-        damage+=10;
-        upgradeCost*=1.25;
+        damage += 10;
+        upgradeCost *= 1.25;
     }
 }
