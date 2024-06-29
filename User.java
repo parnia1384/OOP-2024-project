@@ -46,6 +46,17 @@ public class User {
             score+=100*(level-tempLevel);
         }
     }
+    public boolean isCardCharacter(Card card){
+        if(character.equals("Harry Potter")&&(card.getName().equals("QUILIN")||card.getName().equals("HIPPOGRIFF")||card.getName().equals("PHONIX")||card.getName().equals("CENTAUR")))
+            return true;
+        if(character.equals("Ronald Weasley")&&(card.getName().equals("UNICORN")||card.getName().equals("NIFFLER")||card.getName().equals("THESTRAL")))
+            return true;
+        if(character.equals("Hermione Granger")&&(card.getName().equals("HOUSEELF")||card.getName().equals("DEATHEATOR")||card.getName().equals("BOGGART")||card.getName().equals("WERWOLF")))
+            return true;
+        if(character.equals("Draco Malfoy")&&(card.getName().equals("ARAGOG")||card.getName().equals("VAMPIRE")||card.getName().equals("BASILLISK")||card.getName().equals("DEMENTOR")))
+            return true;
+        return false;
+    }
     public ArrayList<Damage_Heal> getCardDeck(){return cardDeck;}
     public ArrayList<Spell> getSpellDeck(){return spellDeck;}
     public ArrayList<Card> getDeck(){
