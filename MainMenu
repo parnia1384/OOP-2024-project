@@ -59,6 +59,8 @@ public class MainMenu {
     public void run(Scanner scanner, User user, RegistryMenu registryMenu, Outputs outputs) {
         while(true){
             String input = scanner.nextLine();
+            if(input.equals("back"))
+                break;
             if (input.equals("start game")) {
                 Game game=new Game(user,scanner,registryMenu,outputs);
                 game.run(shopCards,shopSpells, scanner, registryMenu);
