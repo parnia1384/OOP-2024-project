@@ -15,9 +15,10 @@ public class Game {
     private Card[] guestCards=new Card[6];
     private int betCoin;
     Random random=new Random();
-    final private String time, date;
+    private String time, date;
     private int round;
-
+    private String status;
+    private String secondUser;
     public Game(User hostPlayer, Scanner scanner, RegistryMenu registryMenu, Outputs outputs){
         this.hostPlayer=hostPlayer;
         chooseMood(scanner, registryMenu, outputs);
@@ -31,8 +32,27 @@ public class Game {
         this.date = currentDate.format(dateFormatter);
         this.time = currentTime.format(timeFormatter);
     }
+    public Game(String guestUsername, String date, String time, String status){
+        secondUser = guestUsername;
+        this.date = date;
+        this.time = time;
+        this.status = status;
+    }
+    //we are new:
     public String getDateAndTime(){
-        return date+"\t"+time;
+        return date+" "+time;
+    }
+    public String getStatus(){
+        return status;
+    }
+    public String getTime(){
+        return time;
+    }
+    public String getDate(){
+        return date;
+    }
+    public String getSecondUser(){
+        return secondUser;
     }
     private Matcher getCommandMatcher(String input, String regex){
         Pattern pattern=Pattern.compile(regex);
@@ -370,7 +390,7 @@ public class Game {
                 hostPlayer.reduceHP(guestCard.getDamage()/guestCard.getDuration());
             }
             if(hostPlayer.getHp()<=0){
-                System.out.println("Game has ended. Winner: "+guestPlayer.getUsername());
+                System.out.println("Game has ended. Winner: "+ guestPlayer.getUsername());
                 if(betMood) {
                     System.out.println("Bet coin "+betCoin+" added to "+guestPlayer.getUsername()+"'s wallet!");
                     guestPlayer.addCoin(betCoin);
@@ -383,8 +403,8 @@ public class Game {
                 guestPlayer.reduceHP(-50);
                 hostPlayer.resetHP();
                 String gameForMainMenuHistory = hostPlayer.getUsername() + " vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " winner: " + guestPlayer.getUsername();
-                String forWinner = "vs " + hostPlayer.getUsername() + " " + getDateAndTime() + " status: you won!";
-                String forLoser = "vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " status: you lose!";
+                String forWinner = hostPlayer.getUsername() + " " + getDateAndTime() + " won";
+                String forLoser = guestPlayer.getUsername() + " " + getDateAndTime() + " lose";
                 hostPlayer.addGame(forLoser);
                 guestPlayer.addGame(forWinner);
                 registryMenu.addGame(gameForMainMenuHistory);
@@ -404,8 +424,8 @@ public class Game {
                 hostPlayer.reduceHP(-50);
                 guestPlayer.resetHP();
                 String gameForMainMenuHistory = hostPlayer.getUsername() + " vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " winner: " + hostPlayer.getUsername();
-                String forLoser = "vs " + hostPlayer.getUsername() + " " + getDateAndTime() + " status: you lose!";
-                String forWinner = "vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " status: you won!";
+                String forLoser = hostPlayer.getUsername() + " " + getDateAndTime() + " lose";
+                String forWinner = guestPlayer.getUsername() + " " + getDateAndTime() + " won";
                 hostPlayer.addGame(forWinner);
                 guestPlayer.addGame(forLoser);
                 registryMenu.addGame(gameForMainMenuHistory);
@@ -506,5 +526,10 @@ public class Game {
                 return hostCards[i];
         }
         return null;
+    }
+
+    @Override
+    public String toString(){
+        return "vs\t" + this.secondUser + " " + this.time + " " + this.date + " " + this.status;
     }
 }
