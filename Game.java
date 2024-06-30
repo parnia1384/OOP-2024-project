@@ -38,7 +38,6 @@ public class Game {
         this.time = time;
         this.status = status;
     }
-    //we are new:
     public String getDateAndTime(){
         return date+" "+time;
     }
@@ -202,14 +201,14 @@ public class Game {
         }
     }
     public void run(ArrayList<Damage_Heal> cards, ArrayList<Spell> spells, Scanner scanner, RegistryMenu registryMenu){
-        if(hostPlayer.getCardDeck().isEmpty()&&hostPlayer.getSpellDeck().isEmpty()) {
+        if(hostPlayer.getCardDeck().isEmpty() && hostPlayer.getSpellDeck().isEmpty()) {
             hostPlayer.getRandDeck(cards, spells);
-            System.out.println("Starterpack for "+hostPlayer.getUsername()+":");
+            System.out.println("Starterpack for " +hostPlayer.getUsername() +":");
             hostPlayer.showDeck();
         }
         if(guestPlayer.getCardDeck().isEmpty()&&guestPlayer.getSpellDeck().isEmpty()) {
             guestPlayer.getRandDeck(cards, spells);
-            System.out.println("Starterpack for "+guestPlayer+":");
+            System.out.println("Starterpack for "+ guestPlayer.getUsername() +":");
             guestPlayer.showDeck();
         }
         for(int i=0; i<21; i++){
@@ -430,7 +429,11 @@ public class Game {
                 hostPlayer.resetHP();
                 String gameForMainMenuHistory = hostPlayer.getUsername() + " vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " winner: " + guestPlayer.getUsername();
                 String forWinner = hostPlayer.getUsername() + " " + getDateAndTime() + " won";
+                Game win = new Game(hostPlayer.getUsername(), this.date, this.time, "win");
+                guestPlayer.addGamesToGames(win);
                 String forLoser = guestPlayer.getUsername() + " " + getDateAndTime() + " lose";
+                Game lose = new Game(guestPlayer.getUsername() ,this.date, this.time, "lose");
+                hostPlayer.addGamesToGames(lose);
                 hostPlayer.addGame(forLoser);
                 guestPlayer.addGame(forWinner);
                 registryMenu.addGame(gameForMainMenuHistory);
@@ -452,6 +455,10 @@ public class Game {
                 String gameForMainMenuHistory = hostPlayer.getUsername() + " vs " + guestPlayer.getUsername() + " " + getDateAndTime() + " winner: " + hostPlayer.getUsername();
                 String forLoser = hostPlayer.getUsername() + " " + getDateAndTime() + " lose";
                 String forWinner = guestPlayer.getUsername() + " " + getDateAndTime() + " won";
+                Game win = new Game(guestPlayer.getUsername(), this.date, this.time, "win");
+                hostPlayer.addGamesToGames(win);
+                Game lose = new Game(hostPlayer.getUsername() ,this.date, this.time, "lose");
+                guestPlayer.addGamesToGames(lose);
                 hostPlayer.addGame(forWinner);
                 guestPlayer.addGame(forLoser);
                 registryMenu.addGame(gameForMainMenuHistory);
