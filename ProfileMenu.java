@@ -101,13 +101,13 @@ public class ProfileMenu extends RegistryMenu{
                 String condition = scanner.nextLine();
                 if(condition.equals("newest")){
                     String[] upsideDown = new String[games.length];
-                    int j = games.length - 1;
+                    int j = (games.length - 1);
                     for(int i = 0; i < games.length; i++){
                         upsideDown[j] = games[i];
                         j -= 1;
                     }
                     if(games.length <= 5){
-                        for(int i = 0; i < 5; i++)
+                        for(int i = 0; i < games.length; i++)
                             System.out.println((i + 1) + ". " + upsideDown[i]);
                         System.out.println("You are in page: 1 / 1.\nYour current menu: Profile menu.");
                     }
@@ -200,7 +200,8 @@ public class ProfileMenu extends RegistryMenu{
                                         }
                                         System.out.println("You are in page " + pageNumber + " / " + maximumPages);
                                         System.out.println("next page or previous?\nIf you want to go to the previous page:\n\tprevious page");
-                                    } else {
+                                    }
+                                    else {
                                         for (int i = counter * 5; i < games.length; i++) {
                                             System.out.println((i + 1) + ". " + games[i]);
                                         }
@@ -338,7 +339,8 @@ public class ProfileMenu extends RegistryMenu{
                                         }
                                         System.out.println("You are in page " + pageNumber + " / " + maximumPages);
                                         System.out.println("next page or previous?\nIf you want to go to the previous page:\n\tprevious page");
-                                    } else {
+                                    }
+                                    else {
                                         for (int i = counter * 5; i < games.length; i++) {
                                             System.out.println((i + 1) + ". " + games[i]);
                                         }
