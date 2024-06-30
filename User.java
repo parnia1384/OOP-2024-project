@@ -123,10 +123,15 @@ public class User {
             tempSpells.remove(Math.abs(randomIndex));
         }
         for (int i = 0; i < 15; i++) {
-            int randomIndex = random.nextInt(tempCards.size());
-            Damage_Heal card = tempCards.get(Math.abs(randomIndex));
-            cardDeck.add(card);
-            tempCards.remove(Math.abs(randomIndex));
+            try {
+                int randomIndex = random.nextInt(tempCards.size());
+                Damage_Heal card = tempCards.get(Math.abs(randomIndex));
+                cardDeck.add(card);
+                tempCards.remove(Math.abs(randomIndex));
+            }
+            catch (Exception exception){
+                System.out.println(exception);
+            }
         }
     }
     public void addToDeck(Damage_Heal card){
