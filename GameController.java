@@ -5,12 +5,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 public class GameController {
     final private RegistryMenu registryMenu = new RegistryMenu();
-    private MainMenu mainMenu = new MainMenu();
+    final private MainMenu mainMenu = new MainMenu();
     private User loggedInUser = null;
     final private Outputs output = new Outputs();
     public void run(){
         mainMenu.addSpell();
         Scanner scan = new Scanner(System.in);
+        System.out.println(output.registryMenuManual);
         String signup = "user create -u (\\S+) -p (\\S+) (\\S+) -email (\\S+) -n (\\S+)";
         String signupWithRandomPassword = "user create -u (\\S+) -p random -email (\\S+) -n (\\S+)";
         String login = "user login -u (\\S+) -p (\\S+)";
@@ -82,6 +83,8 @@ public class GameController {
                     user.setCoin(Integer.parseInt(parts[6]));
                     user.setExp(Integer.parseInt(parts[7]));
                     user.setHp(Integer.parseInt(parts[8]));
+                    user.setScore(Integer.parseInt(parts[9]));
+                    user.setLevel(Integer.parseInt(parts[10]));
                     users.add(user);
                     myUser = user;
                 }
@@ -115,10 +118,20 @@ public class GameController {
                 }
                 else if(line.equals("my games:")){
                     String game;
+                    String guestUsername, date, time, status;
                     while(true){
                         game = scan.nextLine();
                         if(game.equals("Done!")) break;
-                        else myUser.addGame(game);
+                        else{
+                            parts = game.split(" ");
+                            guestUsername = parts[0];
+                            date = parts[1];
+                            time = parts[2];
+                            status = parts[3];
+                            Game myGame = new Game(guestUsername, date, time, status);
+                            myUser.addGamesToGames(myGame);
+                            myUser.addGame(game);
+                        }
                     }
                 }
             }
@@ -147,7 +160,7 @@ public class GameController {
             }
             writer.close();
             for(String game : registryMenu.getGamesHistory()){
-                historyWriter.write(game);
+                historyWriter.write(game + '\n');
             }
             historyWriter.close();
         }
@@ -226,6 +239,7 @@ public class GameController {
             String password=matcher.group(1);
             if(password.equals("1234")){
                 System.out.println("admin logged in successfully!");
+                System.out.println(output.adminManual);
                 while (true){
                     String command=scanner.nextLine();
                     if(command.equals("back")) {
