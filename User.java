@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Random;
 public class User {
     private String username;
@@ -17,7 +18,8 @@ public class User {
     private String character;
     private ArrayList<Damage_Heal> cardDeck = new ArrayList<>();
     private ArrayList<Spell> spellDeck = new ArrayList<>();
-    private ArrayList<String> gamesHistory = new ArrayList<>();
+    final private ArrayList<String> gamesHistory = new ArrayList<>();
+    final private ArrayList<Game> games = new ArrayList<>();
     Random random = new Random();
     User(String username, String password, String email, String nickname){
         this.username = username;
@@ -31,6 +33,45 @@ public class User {
     }
     User(){
         this.username = " ";
+    }
+    //setter methods:
+    public void setScore(int score){
+        this.score = score;
+    }
+    public void setCharacter(String character){this.character=character;}
+    public void setLevel(int level){
+        this.level = level;
+    }
+    public void setCoin(int newCoin){
+        this.coin = newCoin;
+    }
+    public void setNumberOfQuestion(int number){
+        this.numberOfQuestion = number;
+        if(number == 1) this.passwordRecoveryQuestion = "What is your father’s name ?";
+        if(number == 2) this.passwordRecoveryQuestion = "What is your favourite color ?";
+        if(number == 3) this.passwordRecoveryQuestion = "What was the name of your first pet?";
+    }
+    //getter methods:
+    public int getScore(){
+        return score;
+    }
+    public ArrayList<Game> getGames(){
+        return games;
+    }
+    public int getLevel(){
+        return this.level;
+    }
+    public String getUsername(){
+        return username;
+    }
+    public String getPassword(){
+        return password;
+    }
+    public String getNickname(){
+        return nickname;
+    }
+    public String getEmail(){
+        return email;
     }
     public void updateLevel(){
         int tempLevel=level;
@@ -88,7 +129,6 @@ public class User {
             tempCards.remove(Math.abs(randomIndex));
         }
     }
-    public void setCharacter(String character){this.character=character;}
     public void addToDeck(Damage_Heal card){
         cardDeck.add(card);
     }
@@ -126,24 +166,6 @@ public class User {
                 getCardFromDeckByName(name).upgrade();
         }
     }
-    public int getLevel(){
-        return this.level;
-    }
-    public void setLevel(int level){
-        this.level = level;
-    }
-    public String getUsername(){
-        return username;
-    }
-    public String getPassword(){
-        return password;
-    }
-    public String getNickname(){
-        return nickname;
-    }
-    public String getEmail(){
-        return email;
-    }
     public String getPasswordRecoveryQuestion(){
         return passwordRecoveryQuestion;
     }
@@ -166,15 +188,6 @@ public class User {
         this.nickname = newNickname;
         System.out.println("Nickname changed successfully!\nYour new nickname is: " + nickname);
     }
-    public void setCoin(int newCoin){
-        this.coin = newCoin;
-    }
-    public void setNumberOfQuestion(int number){
-        this.numberOfQuestion = number;
-        if(number == 1) this.passwordRecoveryQuestion = "What is your father’s name ?";
-        if(number == 2) this.passwordRecoveryQuestion = "What is your favourite color ?";
-        if(number == 3) this.passwordRecoveryQuestion = "What was the name of your first pet?";
-    }
     public int getCoin(){
         return coin;
     }
@@ -195,18 +208,27 @@ public class User {
     public void setAnswer(String answer){
         this.answer = answer;
     }
-    public void setGamesHistory(ArrayList<String> file){
-        this.gamesHistory = file;
-    }
     public void addGame(String game){
         this.gamesHistory.add(game);
     }
-    public ArrayList<String> getGamesHistory(){
-        return gamesHistory;
+    public void addGamesToGames(Game game){
+        games.add(game);
+    }
+    public void sortGamesByDateAndTime(){
+        Comparator<Game> gamesComparator = Comparator.comparing(Game::getDate).thenComparing(Game::getTime);
+        Collections.sort(games, gamesComparator);
+    }
+    public void sortGamesBasedOnStatus(){
+        Comparator<Game> gamesComparator = Comparator.comparing(Game::getStatus);
+        Collections.sort(games, gamesComparator);
+    }
+    public void sortGamesBasedOnCompetitor(){
+        Comparator<Game> gamesComparator = Comparator.comparing(Game::getSecondUser);
+        Collections.sort(games, gamesComparator);
     }
     @Override
     public String toString(){
-        String userInformation = "new user:\n" + username + " " + password + " " + email + " " + nickname + " " + numberOfQuestion + " " + answer + " " + coin + " " + exp + " " + hp + '\n';
+        String userInformation = "new user:\n" + username + " " + password + " " + email + " " + nickname + " " + numberOfQuestion + " " + answer + " " + coin + " " + exp + " " + hp + " " + score + " " + level + '\n';
         userInformation += "user damage_heal cards:\n";
         for(Damage_Heal card : cardDeck)
             userInformation += (card.toString() + '\n');
