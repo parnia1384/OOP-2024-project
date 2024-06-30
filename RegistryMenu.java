@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -209,5 +207,9 @@ public class RegistryMenu {
     }
     public ArrayList<User> getUsers(){
         return users;
+    }
+    public void sortUsers(ArrayList<User> users){
+        Comparator<User> userComparator = Comparator.comparing(User::getScore);
+        Collections.sort(users, userComparator);
     }
 }
