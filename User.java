@@ -73,28 +73,25 @@ public class User {
     public String getEmail(){
         return email;
     }
-    public void updateLevel(){
-        int tempLevel=level;
-        while(exp>150*level*level){
-            exp-=150*level*level;
-            level++;
-        }
-        if(level>tempLevel){
-            System.out.println(username+"'s level increased to "+level+"! "+100*level+" coins added to their wallet.");
-            coin+=100*level;
-            score+=100*(level-tempLevel);
-        }
+    public int getCoin(){
+        return coin;
     }
-    public boolean isCardCharacter(Card card){
-        if(character.equals("Harry Potter")&&(card.getName().equals("QUILIN")||card.getName().equals("HIPPOGRIFF")||card.getName().equals("PHONIX")||card.getName().equals("CENTAUR")))
-            return true;
-        if(character.equals("Ronald Weasley")&&(card.getName().equals("UNICORN")||card.getName().equals("NIFFLER")||card.getName().equals("THESTRAL")))
-            return true;
-        if(character.equals("Hermione Granger")&&(card.getName().equals("HOUSEELF")||card.getName().equals("DEATHEATOR")||card.getName().equals("BOGGART")||card.getName().equals("WERWOLF")))
-            return true;
-        if(character.equals("Draco Malfoy")&&(card.getName().equals("ARAGOG")||card.getName().equals("VAMPIRE")||card.getName().equals("BASILLISK")||card.getName().equals("DEMENTOR")))
-            return true;
-        return false;
+    public int getHp(){
+        return hp;
+    }
+    public int getExp(){
+        return exp;
+    }
+    public void setHp(int hp){
+        this.hp = hp;
+    }
+    public void reduceHP(int amount){this.hp-=amount;}
+    public void resetHP(){this.hp=100;}
+    public void setExp(int newExp){
+        this.exp = newExp;
+    }
+    public void setAnswer(String answer){
+        this.answer = answer;
     }
     public ArrayList<Damage_Heal> getCardDeck(){return cardDeck;}
     public ArrayList<Spell> getSpellDeck(){return spellDeck;}
@@ -105,12 +102,6 @@ public class User {
         return deck;
     }
     public String getCharacter(){return character;}
-    public void addCoin(int amount){this.coin+=amount;}
-    public void addExp(int amount){this.exp+=amount;}
-    public void removeCardFromDeck(Card card){
-        if(card.getClass().equals(Spell.class))
-            spellDeck.remove(card);
-    }
     public void getRandDeck(ArrayList<Damage_Heal> cards, ArrayList<Spell> spells) {
         ArrayList<Damage_Heal> tempCards = new ArrayList<>(cards);
         ArrayList<Spell> tempSpells = new ArrayList<>(spells);
@@ -132,12 +123,6 @@ public class User {
             }
         }
     }
-    public void addToDeck(Damage_Heal card){
-        cardDeck.add(card);
-    }
-    public void addToDeck(Spell card){
-        spellDeck.add(card);
-    }
     public Damage_Heal getCardFromDeckByName(String name){
         for(Damage_Heal card: cardDeck)
             if(card.getName().equals(name))
@@ -150,16 +135,37 @@ public class User {
                 return card;
         return null;
     }
-    public void showDeck(){
-        int num = 0;
-        if(cardDeck.isEmpty() && spellDeck.isEmpty())
-            System.out.println("Your deck is empty.");
-        else{
-            for(Damage_Heal card: cardDeck)
-                System.out.println(++num+". name: "+card.getName()+" defence_attack: "+card.getDefence_attack()+" duration: "+card.getDuration()+" damage: "+card.getDamage()+" upgradeLeve: "+card.getUpgradeLevel()+" upgradeCost: "+card.getUpgradeCost());
-            for(Spell card: spellDeck)
-                System.out.println(++num+". name: "+card.getName());
+    public String getPasswordRecoveryQuestion(){
+        return passwordRecoveryQuestion;
+    }
+    public boolean trueAnswer(String enteredAnswer){
+        if(enteredAnswer.equals(answer)) return true;
+        else return false;
+    }
+    //methods for add/update/remove something:
+    public void updateLevel(){
+        int tempLevel=level;
+        while(exp>150*level*level){
+            exp-=150*level*level;
+            level++;
         }
+        if(level>tempLevel){
+            System.out.println(username+"'s level increased to "+level+"! "+100*level+" coins added to their wallet.");
+            coin+=100*level;
+            score+=100*(level-tempLevel);
+        }
+    }
+    public void addCoin(int amount){this.coin+=amount;}
+    public void addExp(int amount){this.exp+=amount;}
+    public void removeCardFromDeck(Card card){
+        if(card.getClass().equals(Spell.class))
+            spellDeck.remove(card);
+    }
+    public void addToDeck(Damage_Heal card){
+        cardDeck.add(card);
+    }
+    public void addToDeck(Spell card){
+        spellDeck.add(card);
     }
     public void upgradeCard(String name){
         if(getCardFromDeckByName(name)!=null) {
@@ -169,13 +175,13 @@ public class User {
                 getCardFromDeckByName(name).upgrade();
         }
     }
-    public String getPasswordRecoveryQuestion(){
-        return passwordRecoveryQuestion;
+    public void addGame(String game){
+        this.gamesHistory.add(game);
     }
-    public boolean trueAnswer(String enteredAnswer){
-        if(enteredAnswer.equals(answer)) return true;
-        else return false;
+    public void addGamesToGames(Game game){
+        games.add(game);
     }
+    //changer:
     public void changePassword(String newPassword){
         this.password = newPassword;
     }
@@ -191,32 +197,7 @@ public class User {
         this.nickname = newNickname;
         System.out.println("Nickname changed successfully!\nYour new nickname is: " + nickname);
     }
-    public int getCoin(){
-        return coin;
-    }
-    public void setHp(int hp){
-        this.hp = hp;
-    }
-    public void reduceHP(int amount){this.hp-=amount;}
-    public int getHp(){
-        return hp;
-    }
-    public void resetHP(){this.hp=100;}
-    public void setExp(int newExp){
-        this.exp = newExp;
-    }
-    public int getExp(){
-        return exp;
-    }
-    public void setAnswer(String answer){
-        this.answer = answer;
-    }
-    public void addGame(String game){
-        this.gamesHistory.add(game);
-    }
-    public void addGamesToGames(Game game){
-        games.add(game);
-    }
+    //sort methods:
     public void sortGamesByDateAndTime(){
         Comparator<Game> gamesComparator = Comparator.comparing(Game::getDate).thenComparing(Game::getTime);
         Collections.sort(games, gamesComparator);
@@ -228,6 +209,28 @@ public class User {
     public void sortGamesBasedOnCompetitor(){
         Comparator<Game> gamesComparator = Comparator.comparing(Game::getSecondUser);
         Collections.sort(games, gamesComparator);
+    }
+    public boolean isCardCharacter(Card card){
+        if(character.equals("Harry Potter")&&(card.getName().equals("QUILIN")||card.getName().equals("HIPPOGRIFF")||card.getName().equals("PHONIX")||card.getName().equals("CENTAUR")))
+            return true;
+        if(character.equals("Ronald Weasley")&&(card.getName().equals("UNICORN")||card.getName().equals("NIFFLER")||card.getName().equals("THESTRAL")))
+            return true;
+        if(character.equals("Hermione Granger")&&(card.getName().equals("HOUSEELF")||card.getName().equals("DEATHEATOR")||card.getName().equals("BOGGART")||card.getName().equals("WERWOLF")))
+            return true;
+        if(character.equals("Draco Malfoy")&&(card.getName().equals("ARAGOG")||card.getName().equals("VAMPIRE")||card.getName().equals("BASILLISK")||card.getName().equals("DEMENTOR")))
+            return true;
+        return false;
+    }
+    public void showDeck(){
+        int num = 0;
+        if(cardDeck.isEmpty() && spellDeck.isEmpty())
+            System.out.println("Your deck is empty.");
+        else{
+            for(Damage_Heal card: cardDeck)
+                System.out.println(++num+". name: "+card.getName()+" defence_attack: "+card.getDefence_attack()+" duration: "+card.getDuration()+" damage: "+card.getDamage()+" upgradeLeve: "+card.getUpgradeLevel()+" upgradeCost: "+card.getUpgradeCost());
+            for(Spell card: spellDeck)
+                System.out.println(++num+". name: "+card.getName());
+        }
     }
     @Override
     public String toString(){
