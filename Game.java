@@ -479,6 +479,7 @@ public class Game {
         System.out.print(hostPlayer.getUsername()+": ");
         for(int i=0; i<21; i++) {
             System.out.print("|");
+            System.out.print((i+1)+": ");
             hostTimeLine[i].printBlock();
             if(hostTimeLine[i].hasFailed())
                 System.out.print("*");
@@ -489,6 +490,7 @@ public class Game {
         System.out.print(guestPlayer.getUsername()+": ");
         for(int i=0; i<21; i++) {
             System.out.print("|");
+            System.out.print((i+1)+": ");
             guestTimeLine[i].printBlock();
             if(guestTimeLine[i].hasFailed())
                 System.out.print("*");
@@ -502,12 +504,12 @@ public class Game {
         System.out.print(hostPlayer.getUsername()+": ");
         for(int i=0; i<6; i++) {
             if(hostCards[5]==null&&hostCards[i]!=null) {
-                System.out.print("|" + hostCards[i].getName());
+                System.out.print("|" + (i+1)+ ": "+hostCards[i].getName());
                 if (i == 4)
                     System.out.print("|");
             }
             else if(hostCards[i]!=null) {
-                System.out.print("|" + hostCards[i].getName());
+                System.out.print("|" + (i+1)+ ": "+hostCards[i].getName());
                 if (i == 5)
                     System.out.print("|");
             }
@@ -516,12 +518,12 @@ public class Game {
         System.out.print(guestPlayer.getUsername()+": ");
         for(int i=0; i<6; i++) {
             if(guestCards[5]==null&&guestCards[i]!=null) {
-                System.out.print("|" + guestCards[i].getName());
+                System.out.print("|" + (i+1)+ ": "+guestCards[i].getName());
                 if (i == 4)
                     System.out.print("|");
             }
             else if(guestCards[i]!=null) {
-                System.out.print("|" + guestCards[i].getName());
+                System.out.print("|" + (i+1)+ ": "+guestCards[i].getName());
                 if (i == 5)
                     System.out.print("|");
             }
