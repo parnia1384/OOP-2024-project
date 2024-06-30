@@ -237,8 +237,8 @@ public class ProfileMenu extends RegistryMenu{
                 if(whichOne.equals("win")){
                     if(games.length <= 5){
                         int i = 1;
-                        for(int j = 4; 0 <= j; j--){
-                            System.out.println(i + ". " + games[i]);
+                        for(int j = (games.length - 1); 0 <= j; j--){
+                            System.out.println(i + ". " + games[j]);
                             i += 1;
                         }
                         System.out.println("You are in page: 1 / 1.\nYour current menu: Profile menu.");
