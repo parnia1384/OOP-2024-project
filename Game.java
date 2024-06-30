@@ -19,6 +19,7 @@ public class Game {
     private int round;
     private String status;
     private String secondUser;
+    private boolean endGame=false;
     public Game(User hostPlayer, Scanner scanner, RegistryMenu registryMenu, Outputs outputs){
         this.hostPlayer=hostPlayer;
         chooseMood(scanner, registryMenu, outputs);
@@ -154,7 +155,7 @@ public class Game {
             }
             case "4": {
                 hostPlayer.setCharacter("Draco Malfoy");
-                System.out.println("Host's character is Draco Malfoy!");
+                System.out.println(hostPlayer.getUsername()+"'s character is Draco Malfoy!");
                 break;
             }
         }
@@ -179,7 +180,7 @@ public class Game {
             }
             case "4": {
                 guestPlayer.setCharacter("Draco Malfoy");
-                System.out.println("Guest's character is Draco Malfoy!");
+                System.out.println(guestPlayer.getUsername()+"'s character is Draco Malfoy!");
                 break;
             }
         }
@@ -213,19 +214,28 @@ public class Game {
             showGameDetails();
             System.out.println("Guest: ");
             deploy(scanner,false, round);
+            if(endGame)
+                break;
             System.out.println("Host: ");
             deploy(scanner,true, round);
+            if(endGame)
+                break;
             checkTimeLine();
             System.out.println("Round "+(round)+" is over");
             if(round==4)
                 break;
         }
-        checkWinner(cards,spells,scanner, registryMenu);
+        if(!endGame)
+            checkWinner(cards,spells,scanner, registryMenu);
     }
     public void deploy(Scanner scanner, Boolean isHostPlaying, int round){
         String command=scanner.nextLine();
         if(command.equals("next round"))
             return;
+        else if(command.equals("end game")){
+            endGame=true;
+            return;
+        }
         String deployCard="^place\\s+card\\s+(?<name>\\w+(?: \\w+)*)\\s+in\\s+block\\s+(?<number>\\w+)$";
         String deploySpell="^deploy\\s+card\\s+(?<name>\\w+(?: \\w+)*)$";
         Matcher cardMatcher=getCommandMatcher(command,deployCard);
