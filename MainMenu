@@ -151,8 +151,8 @@ public class MainMenu {
                     j -= 1;
                 } //newest first
                 if(games.size() <= 5){
-                    for(int i = 0; i < 5; i++)
-                        System.out.println((i + 1) + upsideDown[i]);
+                    for(int i = 0; i < games.size(); i++)
+                        System.out.println((i + 1) + ". " + upsideDown[i]);
                     System.out.println("You are in page 1 / 1");
                 } //less than 5 games
                 else{
