@@ -80,24 +80,36 @@ public class Game {
         }
     }
     public void getBetCoinsFromHost(Scanner scanner){
-        System.out.println("How much is the host paying?");
+        System.out.println("How much is "+hostPlayer.getUsername()+" paying?");
         int amount=scanner.nextInt();
         if(amount>hostPlayer.getCoin()){
-            System.out.println("Not enough money in host wallet! suggest another amount.");
+            System.out.println("Not enough money in "+hostPlayer.getUsername()+"'s wallet! suggest another amount.");
             getBetCoinsFromHost(scanner);
             return;
         }
-        betCoin+=amount;
+        if(amount<=0){
+            System.out.println("must bet a positive amount! try again.");
+            getBetCoinsFromHost(scanner);
+            return;
+        }
+        hostPlayer.addCoin(-1*amount);
+        this.betCoin+=amount;
     }
     public void getBetCoinsFromGuest(Scanner scanner){
-        System.out.println("How much is the guest paying?");
+        System.out.println("How much is "+guestPlayer.getUsername()+" paying?");
         int amount=scanner.nextInt();
         if(amount>guestPlayer.getCoin()){
-            System.out.println("Not enough money in guest's wallet! suggest another amount.");
-            getBetCoinsFromHost(scanner);
+            System.out.println("Not enough money in "+guestPlayer.getUsername()+"'s wallet! suggest another amount.");
+            getBetCoinsFromGuest(scanner);
             return;
         }
-        betCoin+=amount;
+        if(amount<=0){
+            System.out.println("must bet a positive amount! try again.");
+            getBetCoinsFromGuest(scanner);
+            return;
+        }
+        guestPlayer.addCoin(-1*amount);
+        this.betCoin+=amount;
     }
 
     public void guestLogin(Scanner scanner, RegistryMenu registryMenu, Outputs outputs){
@@ -121,6 +133,10 @@ public class Game {
                 System.out.println(outputs.wrongPasswordEntered);
                 guestLogin(scanner,registryMenu,outputs);
             }
+            else if(user.getUsername().equals(hostPlayer.getUsername())){
+                System.out.println("can't play with yourself! try again.");
+                guestLogin(scanner,registryMenu,outputs);
+            }
             else{
                 guestPlayer = user;
                 System.out.println(outputs.loggedInSuccessfully);
@@ -134,22 +150,22 @@ public class Game {
         System.out.println("2. Ronald Weasley");
         System.out.println("3. Hermione Granger");
         System.out.println("4. Draco Malfoy");
-        System.out.println("choose host's character: ");
+        System.out.println("choose "+hostPlayer.getUsername()+"'s character: ");
         String answer=scanner.nextLine();
         switch (answer){
             case "1": {
                 hostPlayer.setCharacter("Harry Potter");
-                System.out.println("Host's character is Harry Potter!");
+                System.out.println(hostPlayer.getUsername()+"'s character is Harry Potter!");
                 break;
             }
             case "2": {
                 hostPlayer.setCharacter("Ronald Weasley");
-                System.out.println("Host's character is Ronald Weasley!");
+                System.out.println(hostPlayer.getUsername()+"'s character is Ronald Weasley!");
                 break;
             }
             case "3": {
                 hostPlayer.setCharacter("Hermione Granger");
-                System.out.println("Host's character is Hermione Granger!");
+                System.out.println(hostPlayer.getUsername()+"'s character is Hermione Granger!");
                 break;
 
             }
@@ -159,22 +175,22 @@ public class Game {
                 break;
             }
         }
-        System.out.println("choose guest's character: ");
+        System.out.println("choose "+guestPlayer.getUsername()+"'s character: ");
         answer=scanner.nextLine();
         switch (answer){
             case "1": {
                 guestPlayer.setCharacter("Harry Potter");
-                System.out.println("Guest's character is Harry Potter!");
+                System.out.println(guestPlayer.getUsername()+"'s character is Harry Potter!");
                 break;
             }
             case "2": {
                 guestPlayer.setCharacter("Ronald Weasley");
-                System.out.println("Guest's character is Ronald Weasley!");
+                System.out.println(guestPlayer.getUsername()+"'s character is Ronald Weasley!");
                 break;
             }
             case "3": {
                 guestPlayer.setCharacter("Hermione Granger");
-                System.out.println("Guest's character is Hermione Granger!");
+                System.out.println(guestPlayer.getUsername()+"'s character is Hermione Granger!");
                 break;
 
             }
@@ -188,12 +204,12 @@ public class Game {
     public void run(ArrayList<Damage_Heal> cards, ArrayList<Spell> spells, Scanner scanner, RegistryMenu registryMenu){
         if(hostPlayer.getCardDeck().isEmpty()&&hostPlayer.getSpellDeck().isEmpty()) {
             hostPlayer.getRandDeck(cards, spells);
-            System.out.println("Starterpack for the host:");
+            System.out.println("Starterpack for "+hostPlayer.getUsername()+":");
             hostPlayer.showDeck();
         }
         if(guestPlayer.getCardDeck().isEmpty()&&guestPlayer.getSpellDeck().isEmpty()) {
             guestPlayer.getRandDeck(cards, spells);
-            System.out.println("Starterpack for the guest:");
+            System.out.println("Starterpack for "+guestPlayer+":");
             guestPlayer.showDeck();
         }
         for(int i=0; i<21; i++){
@@ -212,11 +228,11 @@ public class Game {
         while(true){
             System.out.println("Round "+(++round)+":");
             showGameDetails();
-            System.out.println("Guest: ");
+            System.out.println(guestPlayer.getUsername()+": ");
             deploy(scanner,false, round);
             if(endGame)
                 break;
-            System.out.println("Host: ");
+            System.out.println(hostPlayer.getUsername()+": ");
             deploy(scanner,true, round);
             if(endGame)
                 break;
@@ -362,8 +378,8 @@ public class Game {
         }
     }
     public void getPlayersDamage(){
-        System.out.println("Host: "+getHostDamage());
-        System.out.println("Guest: "+getGuestDamage());
+        System.out.println(hostPlayer.getUsername()+": "+getHostDamage());
+        System.out.println(guestPlayer.getUsername()+": "+getGuestDamage());
     }
     public int getHostDamage(){
         int hostDamage=0;
@@ -460,7 +476,7 @@ public class Game {
     public void showGameDetails(){
         //timeline
         System.out.println("Time line:");
-        System.out.print("Host: ");
+        System.out.print(hostPlayer.getUsername()+": ");
         for(int i=0; i<21; i++) {
             System.out.print("|");
             hostTimeLine[i].printBlock();
@@ -470,7 +486,7 @@ public class Game {
                 System.out.print("|");
         }
         System.out.println();
-        System.out.print("Guest: ");
+        System.out.print(guestPlayer.getUsername()+": ");
         for(int i=0; i<21; i++) {
             System.out.print("|");
             guestTimeLine[i].printBlock();
@@ -483,7 +499,7 @@ public class Game {
         System.out.println("---------------------------------------------------------------------------------------------------------");
         //cards
         System.out.println("Available cards: ");
-        System.out.print("Host: ");
+        System.out.print(hostPlayer.getUsername()+": ");
         for(int i=0; i<6; i++) {
             if(hostCards[5]==null&&hostCards[i]!=null) {
                 System.out.print("|" + hostCards[i].getName());
@@ -497,7 +513,7 @@ public class Game {
             }
         }
         System.out.println();
-        System.out.print("Guest: ");
+        System.out.print(guestPlayer.getUsername()+": ");
         for(int i=0; i<6; i++) {
             if(guestCards[5]==null&&guestCards[i]!=null) {
                 System.out.print("|" + guestCards[i].getName());
@@ -516,12 +532,12 @@ public class Game {
         getPlayersDamage();
         System.out.println("---------------------------------------------------------------------------------------------------------");
         System.out.println("Players' hp: ");
-        System.out.println("Host: "+hostPlayer.getHp());
-        System.out.println("Guest: "+guestPlayer.getHp());
+        System.out.println(hostPlayer.getUsername()+": "+hostPlayer.getHp());
+        System.out.println(guestPlayer.getUsername()+": "+guestPlayer.getHp());
         System.out.println("---------------------------------------------------------------------------------------------------------");
         System.out.println("Players' character: ");
-        System.out.println("Host: "+hostPlayer.getCharacter());
-        System.out.println("Guest: "+guestPlayer.getCharacter());
+        System.out.println(hostPlayer.getUsername()+": "+hostPlayer.getCharacter());
+        System.out.println(guestPlayer.getUsername()+": "+guestPlayer.getCharacter());
     }
     public Card getGuestCardByName(String name){
         for(int i=0; i<6; i++){
