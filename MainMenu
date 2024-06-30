@@ -57,23 +57,26 @@ public class MainMenu {
                 System.out.println(++num+". name: "+card.getName()+" price: "+card.getPrice());
     }
     public void run(Scanner scanner, User user, RegistryMenu registryMenu, Outputs outputs) {
+        System.out.println(outputs.mainMenuManual);
         while(true){
             String input = scanner.nextLine();
-            if(input.equals("back"))
-                break;
             if (input.equals("start game")) {
+                System.out.println(outputs.gameManual);
                 Game game=new Game(user,scanner,registryMenu,outputs);
                 game.run(shopCards,shopSpells, scanner, registryMenu);
             }
-            else if (input.equals("show deck")) {
+            else if (input.equals("show my deck")) {
                 user.showDeck();
             }
             else if (input.equals("show history")) {
-                for(String games : registryMenu.getGamesHistory())
-                    System.out.println(games);
+                showHistory(scanner, registryMenu);
+            }
+            else if(input.equals("show scoreboard")){
+                showScoreBoard(registryMenu);
             }
             else if (input.equals("shop menu")) {
                 System.out.println("entered shop menu");
+                System.out.println(outputs.shopMenuManual);
                 showCardsNotInDeck(user);
                 while (true) {
                     String command = scanner.nextLine();
@@ -115,15 +118,171 @@ public class MainMenu {
                         String name = upgrade.group(1);
                         user.upgradeCard(name);
                     }
+                    else if(command.equals("command prompt")) System.out.println(outputs.shopMenuManual);
+                    else System.out.println("invalid input!");
                 }
             }
             else if (input.equals("Profile menu")) {
                 System.out.println("Entered profile menu successfully.");
+                System.out.println(outputs.profileMenuManual);
                 profileMenu.myProfile(scanner, user);
             }
-            else if(input.equals("Return to signup menu")){
+            else if(input.equals("back")){
                 System.out.println("Returned to signup menu successfully!");
                 break;
+            }
+            else if (input.equals("command prompt")) {
+                System.out.println(outputs.mainMenuManual);
+            }
+            else System.out.println("invalid input!");
+        }
+    }
+    private void showHistory(Scanner scanner, RegistryMenu registryMenu){
+        ArrayList<String> games = registryMenu.getGamesHistory();
+        if(games.isEmpty()) System.out.println("There is no game to show");
+        else{
+            System.out.println("newest or oldest?");
+            String order = scanner.nextLine();
+            if(order.equals("newest")){
+                String[] upsideDown = new String[games.size()];
+                int j = games.size() - 1;
+                for(int i = 0; i < games.size(); i++){
+                    upsideDown[j] = games.get(i);
+                    j -= 1;
+                } //newest first
+                if(games.size() <= 5){
+                    for(int i = 0; i < 5; i++)
+                        System.out.println((i + 1) + upsideDown[i]);
+                    System.out.println("You are in page 1 / 1");
+                } //less than 5 games
+                else{
+                    for(int i = 0; i < 5; i++)
+                        System.out.println((i + 1) + ". " + upsideDown[i]);
+                    int counter = 0;
+                    int pageNumber = 1;
+                    int maximumPages;
+                    if(upsideDown.length % 5 == 0) maximumPages = upsideDown.length / 5;
+                    else maximumPages = (upsideDown.length / 5 + 1);
+                    System.out.println("You are in page 1 / " + maximumPages);
+                    System.out.println("If you want to see other games:\n\tnext page\nTo return to main menu:\n\tback");
+                    while(true){
+                        String command = scanner.nextLine();
+                        if(command.equals("back")){
+                            System.out.println("Returned to main menu successfully");
+                            break;
+                        }
+                        else if(command.equals("next page")){
+                            if(pageNumber == maximumPages)
+                                System.out.println("invalid command!");
+                            else{
+                                counter += 1;
+                                pageNumber += 1;
+                                if(((counter + 1) * 5) <= upsideDown.length){
+                                    for(int i = counter * 5; i < (counter + 1) * 5; i++){
+                                        System.out.println((i + 1) + ". " + upsideDown[i]);
+                                    }
+                                    System.out.println("You are in page " + pageNumber + " / " + maximumPages);
+                                    System.out.println("next page or previous?\nIf you want to go to the previous page:\n\tprevious page");
+                                }
+                                else{
+                                    for(int i = counter * 5; i < upsideDown.length; i++){
+                                        System.out.println((i + 1) + ". " + upsideDown[i]);
+                                    }
+                                    System.out.println("You are in page " + pageNumber + " / " + maximumPages);
+                                    System.out.println("end.\nIf you want to go to the previous page:\n\tprevious page");
+                                }
+                            }
+                        }
+                        else if(command.equals("previous page")){
+                            if(pageNumber == 1) System.out.println("invalid command!");
+                            else{
+                                counter -= 1;
+                                pageNumber -= 1;
+                                for(int i = (counter * 5); i < (counter + 1) * 5; i++){
+                                    System.out.println((i + 1) + ". " + upsideDown[i]);
+                                }
+                                System.out.println("You are in page " + pageNumber + " / " + maximumPages);
+                                System.out.println("next page or previous?\nIf you want to go to the previous page:\n\tprevious page");
+                            }
+                        }
+                    }
+                }
+            }
+            else if(order.equals("oldest")){
+                if(games.size() <= 5) {
+                    int i = 1;
+                    for(String game : games){
+                        System.out.println(i + ". " + game);
+                        i += 1;
+                    }
+                    System.out.println("You are in page 1 / 1");
+                }
+                else{
+                    for(int i = 0; i < 5; i++){
+                        System.out.println((i + 1) + ". " + games.get(i));
+                    }
+                    int counter = 0;
+                    int pageNumber = 1;
+                    int maximumPages;
+                    if(games.size() % 5 == 0) maximumPages = games.size() / 5;
+                    else maximumPages = (games.size() / 5 + 1);
+                    System.out.println("You are in page 1 / " + maximumPages);
+                    System.out.println("If you want to see other games:\n\tnext page\nTo return to main menu:\n\tback");
+                    while(true){
+                        String command = scanner.nextLine();
+                        if(command.equals("back")){
+                            System.out.println("Returned to main menu successfully");
+                            break;
+                        }
+                        else if(command.equals("next page")){
+                            if(pageNumber == maximumPages)
+                                System.out.println("invalid command!");
+                            else{
+                                counter += 1;
+                                pageNumber += 1;
+                                if(((counter + 1) * 5) <= games.size()){
+                                    for(int i = (counter * 5); i < (counter + 1) * 5; i++){
+                                        System.out.println((i + 1) + ". " + games.get(i));
+                                    }
+                                    System.out.println("You are in page " + pageNumber + " / " + maximumPages);
+                                    System.out.println("next page or previous?\nIf you want to go to the previous page:\n\tprevious page");
+                                }
+                                else{
+                                    for(int i = counter * 5; i < games.size(); i++){
+                                        System.out.println((i + 1) + ". " + games.get(i));
+                                    }
+                                    System.out.println("You are in page " + pageNumber + " / " + maximumPages);
+                                    System.out.println("end.\nIf you want to go to the previous page:\n\tprevious page");
+                                }
+                            }
+                        }
+                        else if(command.equals("previous page")){
+                            if(pageNumber == 1) System.out.println("invalid command!");
+                            else{
+                                counter -= 1;
+                                pageNumber -= 1;
+                                for(int i = (counter * 5); i < (counter + 1) * 5; i++){
+                                    System.out.println((i + 1) + ". " + games.get(i));
+                                }
+                                System.out.println("You are in page " + pageNumber + " / " + maximumPages);
+                                System.out.println("next page or previous?\nIf you want to go to the previous page:\n\tprevious page");
+                            }
+                        }
+                    }
+                }
+            }
+            else System.out.println("invalid input! Returned to the main menu.");
+        }
+    }
+    private void showScoreBoard(RegistryMenu registryMenu){
+        ArrayList<User> users = registryMenu.getUsers();
+        if(users.isEmpty()) System.out.println("There are no users to sort. Returned to main menu...");
+        else{
+            registryMenu.sortUsers(users);
+            int i = 1;
+            for(int j = users.size() - 1; 0 <= j; j--){
+                System.out.println(i + ". " + users.get(j).getUsername() + '\t' + users.get(j).getEmail() + "    score: " +users.get(j).getScore());
+                i += 1;
             }
         }
     }
