@@ -13,7 +13,7 @@ public class Game {
     private Block[] guestTimeLine=new Block[21];
     private Card[] hostCards=new Card[6];
     private Card[] guestCards=new Card[6];
-    private int betCoin;
+    private int betCoin=0;
     Random random=new Random();
     private String time, date;
     private int round;
@@ -23,7 +23,6 @@ public class Game {
     public Game(User hostPlayer, Scanner scanner, RegistryMenu registryMenu, Outputs outputs){
         this.hostPlayer=hostPlayer;
         chooseMood(scanner, registryMenu, outputs);
-        this.betCoin=0;
         LocalDate currentDate = LocalDate.now();
         LocalTime currentTime = LocalTime.now();
 
@@ -55,6 +54,7 @@ public class Game {
     public String getSecondUser(){
         return secondUser;
     }
+    public void addBetToCoin(int amount){this.betCoin+=amount;}
     private Matcher getCommandMatcher(String input, String regex){
         Pattern pattern=Pattern.compile(regex);
         return pattern.matcher(input);
@@ -93,7 +93,7 @@ public class Game {
             return;
         }
         hostPlayer.addCoin(-1*amount);
-        this.betCoin+=amount;
+        addBetToCoin(amount);
     }
     public void getBetCoinsFromGuest(Scanner scanner){
         System.out.println("How much is "+guestPlayer.getUsername()+" paying?");
@@ -109,7 +109,7 @@ public class Game {
             return;
         }
         guestPlayer.addCoin(-1*amount);
-        this.betCoin+=amount;
+        addBetToCoin(amount);
     }
 
     public void guestLogin(Scanner scanner, RegistryMenu registryMenu, Outputs outputs){
